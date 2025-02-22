@@ -20,14 +20,19 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\thirdParty\glad\src\glad.c" />
+    <ClCompile Include="..\thirdParty\stb_image\stb_image.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\thirdParty\stb_image\stb_image.h" />
     <ClInclude Include="shader.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\shaders\shader.fs" />
-    <None Include="..\shaders\shader.vs" />
+    <None Include="..\shaders\shader.frag" />
+    <None Include="..\shaders\shader.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\assets\container.jpg" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -82,8 +87,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\SDKs\glfw-3.4.bin.WIN64\include;D:\DevelopProject\LearnOpenGL\thirdParty\glad\include;$(IncludePath)</IncludePath>
+    <IncludePath>D:\SDKs\glfw-3.4.bin.WIN64\include;D:\DevelopProject\LearnOpenGL\thirdParty\glad\include;D:\DevelopProject\LearnOpenGL\thirdParty\stb_image;$(IncludePath)</IncludePath>
     <LibraryPath>D:\SDKs\glfw-3.4.bin.WIN64\lib-vc2022;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(SourcePath)</SourcePath>
+    <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

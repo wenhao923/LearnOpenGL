@@ -9,6 +9,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
+    <Filter Include="resource">
+      <UniqueIdentifier>{400c633e-ba0a-4760-82eb-fbcdb420ad2e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -17,18 +20,29 @@
     <ClCompile Include="..\thirdParty\glad\src\glad.c">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\thirdParty\stb_image\stb_image.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\thirdParty\stb_image\stb_image.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\shaders\shader.fs">
-      <Filter>源文件</Filter>
+    <None Include="..\shaders\shader.vert">
+      <Filter>resource</Filter>
     </None>
-    <None Include="..\shaders\shader.vs">
-      <Filter>源文件</Filter>
+    <None Include="..\shaders\shader.frag">
+      <Filter>resource</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\assets\container.jpg">
+      <Filter>resource</Filter>
+    </Image>
   </ItemGroup>
 </Project>
