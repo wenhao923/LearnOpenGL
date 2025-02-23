@@ -14,35 +14,44 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="glad.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\thirdParty\glad\src\glad.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\thirdParty\stb_image\stb_image.cpp">
+    <ClCompile Include="stb_image.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="shader.h">
+    <ClInclude Include="..\includes\glad.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\thirdParty\stb_image\stb_image.h">
+    <ClInclude Include="..\includes\khrplatform.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\shader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\stb_image.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\shaders\shader.vert">
-      <Filter>resource</Filter>
-    </None>
-    <None Include="..\shaders\shader.frag">
-      <Filter>resource</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\assets\container.jpg">
+    <Image Include="..\resources\container.jpg">
       <Filter>resource</Filter>
     </Image>
+    <Image Include="..\resources\awesomeface.png">
+      <Filter>resource</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\resources\shaders\shader.frag">
+      <Filter>resource</Filter>
+    </None>
+    <None Include="..\resources\shaders\shader.vert">
+      <Filter>resource</Filter>
+    </None>
   </ItemGroup>
 </Project>
