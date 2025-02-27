@@ -1,7 +1,7 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include <glad.h>; // 包含glad来获取所有的必须OpenGL头文件
+#include <glad.h>   // 包含glad来获取所有的必须OpenGL头文件
 #include <glm/glm.hpp>
 
 #include <string>
@@ -51,8 +51,6 @@ public:
 
         // 2. 编译着色器
         unsigned int vertex, fragment;
-        int success;
-        char infoLog[512];
 
         // 顶点着色器
         vertex = glCreateShader(GL_VERTEX_SHADER);
