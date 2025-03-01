@@ -50,10 +50,13 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\resources\shaders\shader.frag">
+    <None Include="..\resources\shaders\objectshader.frag">
       <Filter>resource</Filter>
     </None>
     <None Include="..\resources\shaders\shader.vert">
+      <Filter>resource</Filter>
+    </None>
+    <None Include="..\resources\shaders\lampshader.frag">
       <Filter>resource</Filter>
     </None>
   </ItemGroup>

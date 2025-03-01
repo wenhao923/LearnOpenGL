@@ -35,7 +35,8 @@
     <Image Include="..\resources\container.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\resources\shaders\shader.frag" />
+    <None Include="..\resources\shaders\lampshader.frag" />
+    <None Include="..\resources\shaders\objectshader.frag" />
     <None Include="..\resources\shaders\shader.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
