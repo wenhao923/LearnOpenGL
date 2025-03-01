@@ -113,12 +113,12 @@ int main()
         -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
         -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
 
         -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
         -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
@@ -148,10 +148,6 @@ int main()
         -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
         -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
     };
-    unsigned int indices[] = {
-		0, 1, 2,
-		0, 2, 3
-    };
 
     unsigned int lightVAO;
     glGenVertexArrays(1, &lightVAO);
@@ -167,7 +163,7 @@ int main()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
     // normal属性
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -181,11 +177,11 @@ int main()
 
         processInput(window);
 
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(0.01f, 0.1f, 0.1f, 0.1f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::scale(model, glm::vec3(1.0, 2.0, 1.0));
+        model = glm::scale(model, glm::vec3(1.0, 1.0, 1.0));
         glm::mat4 view = myCamera.GetViewMatrix();
         glm::mat4 projection = glm::mat4(1.0f);
         projection = glm::perspective(glm::radians(myCamera.Zoom), (float)screenWidth / screenHeight, 0.1f, 100.0f);
@@ -193,22 +189,23 @@ int main()
         lightingShader.use();
         lightingShader.setVec3("cameraPos", myCamera.Position);
 
-        lightingShader.setVec3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
-        lightingShader.setVec3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
-        lightingShader.setVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
-        lightingShader.setFloat("material.shininess", 32.0f);
+        lightingShader.setVec3("material.ambient", glm::vec3(0.0f, 0.1f, 0.06f));
+        lightingShader.setVec3("material.diffuse", glm::vec3(0.0f, 0.50980392f, 0.50980392f));
+        lightingShader.setVec3("material.specular", glm::vec3(0.50196078f, 0.50196078f, 0.50196078f));
+        lightingShader.setFloat("material.shininess", 32);
 
         glm::vec3 lightColor;
         lightColor.x = sin(currentFrame * 2.0f);
         lightColor.y = sin(currentFrame * 0.7f);
         lightColor.z = sin(currentFrame * 1.3f);
+		lightColor = glm::vec3(1.0f);
 
         glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f); // 降低影响
         glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f); // 很低的影响
 
         lightingShader.setVec3("light.position", lightPos);
-        lightingShader.setVec3("light.ambient", ambientColor);
-        lightingShader.setVec3("light.diffuse", diffuseColor);
+        lightingShader.setVec3("light.ambient", lightColor);
+        lightingShader.setVec3("light.diffuse", lightColor);
         lightingShader.setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
         lightingShader.setMat4("model", model);
@@ -222,6 +219,8 @@ int main()
         lampShader.setMat4("model", model);
         lampShader.setMat4("view", view);
         lampShader.setMat4("projection", projection);
+
+        lampShader.setVec3("lightColor", lightColor);
 
         glBindVertexArray(lightVAO);
         lightingShader.use();
