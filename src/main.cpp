@@ -142,29 +142,6 @@ int main()
     }
     stbi_image_free(data);
 
-	unsigned int EmissionMap;
-    glGenTextures(1, &EmissionMap);
-    glBindTexture(GL_TEXTURE_2D, EmissionMap);
-    // 为当前绑定的纹理对象设置环绕、过滤方式
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    // 加载并生成纹理
-    data = stbi_load("../resources/matrix.jpg", &width, &height, &nrChannels, 0);
-    if (data)
-    {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else
-    {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-    stbi_image_free(data);
-
-
-
     glViewport(0, 0, screenWidth, screenHeight);
 
     Shader lightingShader("../resources/shaders/shader.vert", "../resources/shaders/objectshader.frag");
@@ -272,22 +249,20 @@ int main()
         lightingShader.setVec3("cameraPos", myCamera.Position);
         lightingShader.setInt("material.diffuse", 0);
         lightingShader.setInt("material.specular", 1);
-        lightingShader.setInt("material.emit", 2);
         lightingShader.setFloat("material.shininess", 32);
 
-        glm::vec3 lightColor;
-        lightColor.x = sin(currentFrame * 2.0f);
-        lightColor.y = sin(currentFrame * 0.7f);
-        lightColor.z = sin(currentFrame * 1.3f);
-		lightColor = glm::vec3(1.0f);
+        glm::vec3 lightColor = glm::vec3(1.0f);
 
-        glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f); // 降低影响
-        glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f); // 很低的影响
+        glm::vec3 diffuseColor = lightColor * glm::vec3(0.6f); // 降低影响
+        glm::vec3 ambientColor = diffuseColor * glm::vec3(0.4f); // 很低的影响
 
-        lightingShader.setVec3("light.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+        lightingShader.setVec3("light.position", lightPos);
         lightingShader.setVec3("light.ambient", ambientColor);
         lightingShader.setVec3("light.diffuse", diffuseColor);
         lightingShader.setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+        lightingShader.setFloat("light.constant", 1.0f);
+        lightingShader.setFloat("light.linear", 0.09f);
+        lightingShader.setFloat("light.quadratic", 0.032f);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuseMap);
@@ -305,6 +280,19 @@ int main()
             glBindVertexArray(lightVAO);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
+
+
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, lightPos);
+        model = glm::scale(model, glm::vec3(0.2f));
+        lampShader.use();
+        lampShader.setMat4("model", model);
+        lampShader.setMat4("view", view);
+        lampShader.setMat4("projection", projection);
+        glBindVertexArray(lightVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        lampShader.setVec3("lightColor", lightColor);
 
         glfwPollEvents();
         glfwSwapBuffers(window);
