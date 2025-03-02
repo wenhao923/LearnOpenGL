@@ -142,6 +142,27 @@ int main()
     }
     stbi_image_free(data);
 
+	unsigned int EmissionMap;
+    glGenTextures(1, &EmissionMap);
+    glBindTexture(GL_TEXTURE_2D, EmissionMap);
+    // 为当前绑定的纹理对象设置环绕、过滤方式
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // 加载并生成纹理
+    data = stbi_load("../resources/matrix.jpg", &width, &height, &nrChannels, 0);
+    if (data)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+    stbi_image_free(data);
+
 
 
     glViewport(0, 0, screenWidth, screenHeight);
@@ -238,6 +259,7 @@ int main()
         lightingShader.setVec3("cameraPos", myCamera.Position);
         lightingShader.setInt("material.diffuse", 0);
         lightingShader.setInt("material.specular", 1);
+        lightingShader.setInt("material.emit", 2);
         lightingShader.setFloat("material.shininess", 32);
 
         glm::vec3 lightColor;
@@ -249,6 +271,7 @@ int main()
         glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f); // 降低影响
         glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f); // 很低的影响
 
+        lightingShader.setVec3("light.position", lightPos);
         lightingShader.setVec3("light.position", lightPos);
         lightingShader.setVec3("light.ambient", ambientColor);
         lightingShader.setVec3("light.diffuse", diffuseColor);
@@ -272,6 +295,8 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, diffuseMap);
 		glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, specularMap);
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, EmissionMap);
         glBindVertexArray(lightVAO);
         lightingShader.use();
         glDrawArrays(GL_TRIANGLES, 0, 36);

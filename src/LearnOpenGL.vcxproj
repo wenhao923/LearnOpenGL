@@ -35,6 +35,7 @@
     <Image Include="..\resources\container.jpg" />
     <Image Include="..\resources\container2.png" />
     <Image Include="..\resources\container2_specular.png" />
+    <Image Include="..\resources\matrix.jpg" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resources\shaders\lampshader.frag" />
