@@ -48,6 +48,12 @@
     <Image Include="..\resources\awesomeface.png">
       <Filter>resource</Filter>
     </Image>
+    <Image Include="..\resources\container2.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\resources\container2_specular.png">
+      <Filter>resource</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resources\shaders\objectshader.frag">
