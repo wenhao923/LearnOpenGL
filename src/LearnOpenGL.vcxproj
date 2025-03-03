@@ -27,20 +27,38 @@
     <ClInclude Include="..\includes\camera.h" />
     <ClInclude Include="..\includes\glad.h" />
     <ClInclude Include="..\includes\khrplatform.h" />
+    <ClInclude Include="..\includes\mesh.h" />
+    <ClInclude Include="..\includes\model.h" />
     <ClInclude Include="..\includes\shader.h" />
     <ClInclude Include="..\includes\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\resources\awesomeface.png" />
+    <Image Include="..\resources\backpack\ao.jpg" />
+    <Image Include="..\resources\backpack\diffuse.jpg" />
+    <Image Include="..\resources\backpack\normal.png" />
+    <Image Include="..\resources\backpack\roughness.jpg" />
+    <Image Include="..\resources\backpack\specular.jpg" />
     <Image Include="..\resources\container.jpg" />
     <Image Include="..\resources\container2.png" />
     <Image Include="..\resources\container2_specular.png" />
     <Image Include="..\resources\matrix.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\resources\backpack\backpack.mtl" />
+    <None Include="..\resources\shaders\backPackshader.frag" />
+    <None Include="..\resources\shaders\backPackshader.vert" />
     <None Include="..\resources\shaders\lampshader.frag" />
     <None Include="..\resources\shaders\objectshader.frag" />
     <None Include="..\resources\shaders\shader.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="..\resources\backpack\backpack.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </Object>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\resources\backpack\source_attribution.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -138,7 +156,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\SDKs\Assimp\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

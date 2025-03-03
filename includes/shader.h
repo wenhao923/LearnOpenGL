@@ -1,8 +1,8 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include <glad.h>   // 包含glad来获取所有的必须OpenGL头文件
-#include <glm/glm.hpp>
+#include "glad.h"   // 包含glad来获取所有的必须OpenGL头文件
+#include "glm/glm.hpp"
 
 #include <string>
 #include <fstream>

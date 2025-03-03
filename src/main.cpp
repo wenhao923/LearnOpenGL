@@ -1,12 +1,16 @@
-#include <iostream>
 #include "glad.h"
-#include <GLFW\glfw3.h>
+#include "GLFW/glfw3.h"
+
 #include "shader.h"
 #include "stb_image.h"
 #include "camera.h"
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include "model.h"
+
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
+
+#include <iostream>
 
 // settings
 const int screenWidth = 800;
@@ -146,6 +150,7 @@ int main()
 
     Shader lightingShader("../resources/shaders/shader.vert", "../resources/shaders/objectshader.frag");
     Shader lampShader("../resources/shaders/shader.vert", "../resources/shaders/lampShader.frag");
+    Shader backPackShader("../resources/shaders/backPackshader.vert", "../resources/shaders/backPackshader.frag");
 
     float vertices[] = {
         // positions          // normals           // texture coords
@@ -216,17 +221,20 @@ int main()
     glBindVertexArray(0);
 
     glm::vec3 cubePositions[] = {
-    glm::vec3(0.0f,  0.0f,  0.0f),
-    glm::vec3(2.0f,  5.0f, -15.0f),
-    glm::vec3(-1.5f, -2.2f, -2.5f),
-    glm::vec3(-3.8f, -2.0f, -12.3f),
-    glm::vec3(2.4f, -0.4f, -3.5f),
-    glm::vec3(-1.7f,  3.0f, -7.5f),
-    glm::vec3(1.3f, -2.0f, -2.5f),
-    glm::vec3(1.5f,  2.0f, -2.5f),
-    glm::vec3(1.5f,  0.2f, -1.5f),
-    glm::vec3(-1.3f,  1.0f, -1.5f)
+        glm::vec3(0.0f,  0.0f,  0.0f),
+        glm::vec3(2.0f,  5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3(2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f,  3.0f, -7.5f),
+        glm::vec3(1.3f, -2.0f, -2.5f),
+        glm::vec3(1.5f,  2.0f, -2.5f),
+        glm::vec3(1.5f,  0.2f, -1.5f),
+        glm::vec3(-1.3f,  1.0f, -1.5f)
     };
+    stbi_set_flip_vertically_on_load(true);
+
+	Model ourModel("../resources/backpack/backpack.obj");
 
     while (!glfwWindowShouldClose(window))
     {
@@ -238,11 +246,12 @@ int main()
 
         glClearColor(0.01f, 0.1f, 0.1f, 0.1f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        lightingShader.use();
-
+        // 所有场景公用一个view / Projection
         glm::mat4 view = myCamera.GetViewMatrix();
         glm::mat4 projection = glm::mat4(1.0f);
         projection = glm::perspective(glm::radians(myCamera.Zoom), (float)screenWidth / screenHeight, 0.1f, 100.0f);
+
+        lightingShader.use();
         lightingShader.setMat4("view", view);
         lightingShader.setMat4("projection", projection);
 
@@ -313,7 +322,7 @@ int main()
             lightingShader.setMat4("model", model);
 
             glBindVertexArray(lightVAO);
-            glDrawArrays(GL_TRIANGLES, 0, 36);
+            //glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
         for (unsigned int i = 0; i < 4; i++)
@@ -331,6 +340,22 @@ int main()
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
+		backPackShader.use();
+        backPackShader.setMat4("projection", projection);
+        backPackShader.setMat4("view", view);
+
+        // render the loaded model
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+		backPackShader.setMat4("model", model);
+
+        backPackShader.setVec3("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+        backPackShader.setVec3("dirLight.ambient", ambientColor);
+        backPackShader.setVec3("dirLight.diffuse", diffuseColor);
+        backPackShader.setVec3("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		ourModel.Draw(backPackShader);
+
         glfwPollEvents();
         glfwSwapBuffers(window);
     }
@@ -340,6 +365,7 @@ int main()
     glDeleteBuffers(1, &VBO);
     glDeleteProgram(lightingShader.ID);
     glDeleteProgram(lampShader.ID);
+    glDeleteProgram(backPackShader.ID);
 
     glfwTerminate();
     return 0;
