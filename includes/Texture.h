@@ -23,8 +23,9 @@ public:
     }
 
     // 从文件加载纹理（支持自动通道检测）
-    void LoadFromFile(const std::string& path, bool flipVertically = true) {
+    void LoadFromFile(const std::string& path, const std::string& type, bool flipVertically = true) {
         stbi_set_flip_vertically_on_load(flipVertically);
+        this->type = type;
 
         int width, height, nrChannels;
         unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
@@ -82,7 +83,10 @@ public:
 
     // 获取纹理ID
     GLuint GetID() const { return ID; }
+    
+    std::string GetType() const { return type; }
 
 private:
     GLuint ID = 0; // 纹理ID
+    std::string type;
 };

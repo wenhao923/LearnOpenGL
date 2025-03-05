@@ -35,6 +35,7 @@
     <ClInclude Include="..\includes\stb_image.h" />
     <ClInclude Include="..\includes\Light.h" />
     <ClInclude Include="..\includes\Texture.h" />
+    <ClInclude Include="..\includes\utils.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\resources\awesomeface.png" />
@@ -46,7 +47,9 @@
     <Image Include="..\resources\container.jpg" />
     <Image Include="..\resources\container2.png" />
     <Image Include="..\resources\container2_specular.png" />
+    <Image Include="..\resources\marble.jpg" />
     <Image Include="..\resources\matrix.jpg" />
+    <Image Include="..\resources\metal.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resources\backpack\backpack.mtl" />

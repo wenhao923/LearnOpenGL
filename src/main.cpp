@@ -5,6 +5,7 @@
 #include "shader.h"
 #include "stb_image.h"
 #include "Texture.h"
+#include "utils.h"
 
 #include "PointLight.h"
 
@@ -16,23 +17,21 @@
 const int screenWidth = 800;
 const int screenHeight = 600;
 
-std::vector<Vertex> convertToVector(const float* vertices);
-
 int main() {
 	OpenGLWindow window(screenWidth, screenHeight, "LearnOpenGL");
 	if (!window.initialize())
 		return -1;
 
+	// 窗口和相机
 	Camera myCamera = Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 	window.setCamera(&myCamera);
 
 	glEnable(GL_DEPTH_TEST);
 	stbi_set_flip_vertically_on_load(true);
 
-	myTexture diffuseMap, specularMap;
+	myTexture planeMap;
 	try {
-		diffuseMap.LoadFromFile("../resources/container2.png");
-		specularMap.LoadFromFile("../resources/container2_specular.png");
+		planeMap.LoadFromFile("../resources/marble.jpg", "texture_diffuse");
 	}
 	catch (const std::exception& e) {
 		std::cerr << e.what() << std::endl;
@@ -41,16 +40,31 @@ int main() {
 
 	glViewport(0, 0, screenWidth, screenHeight);
 
+	float planeVertices[] = {
+		// positions          // texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
+		 5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
+		-5.0f, -0.5f,  5.0f,  0.0f, 0.0f,
+		-5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
+
+		 5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
+		-5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
+		 5.0f, -0.5f, -5.0f,  2.0f, 2.0f
+	};
+	Texture planeTexture;
+	planeTexture.id = planeMap.GetID();
+	planeTexture.type = planeMap.GetType();
+	auto veticesVec = convertToVector(planeVertices, 5 * 6, 5);
+	Mesh plane(veticesVec, generateIndices(veticesVec), {planeTexture});
+	Shader planeShader("../resources/shaders/shader.vert", "../resources/shaders/objectshader.frag");
+
 	stbi_set_flip_vertically_on_load(true);
 	// 准备资源：顶点数据、texture
 	Model ourModel("../resources/backpack/backpack.obj");
-
-	// 创建Shader
+	// 创建模型对应的Shader
 	Shader backPackShader("../resources/shaders/backPackshader.vert", "../resources/shaders/backPackshader.frag");
 
 	// 创建光源数组
 	std::vector<std::shared_ptr<Light>> Lights;
-
 	// 创建点光源
 	attenuation att = { 1.0f, 0.09f, 0.032f };
 	auto pointLight = std::make_shared<PointLight>(glm::vec3(1.2f, 1.0f, 2.0f), att);
@@ -84,6 +98,12 @@ int main() {
 
 		ourModel.Draw(backPackShader);
 
+		planeShader.use();
+		planeShader.setupShader(Lights, model, view, projection);
+		planeShader.setVec3("viewPos", myCamera.Position);
+
+		plane.Draw(planeShader);
+
 		window.swapBuffers();
 		window.pollEvents();
 	}
@@ -93,21 +113,4 @@ int main() {
 
 	window.terminate();
 	return 0;
-}
-
-std::vector<Vertex> convertToVector(const float* vertices) {
-	size_t count = sizeof(vertices);
-
-	std::vector<Vertex> vertexVector;
-	vertexVector.reserve(count / 8);
-
-	for (size_t i = 0; i < count; i += 8) {
-		Vertex vertex;
-		vertex.Position = glm::vec3(vertices[i], vertices[i + 1], vertices[i + 2]);
-		vertex.Normal = glm::vec3(vertices[i + 3], vertices[i + 4], vertices[i + 5]);
-		vertex.TexCoords = glm::vec2(vertices[i + 6], vertices[i + 7]);
-		vertexVector.push_back(vertex);
-	}
-
-	return vertexVector;
 }

@@ -61,6 +61,9 @@
     <ClInclude Include="..\includes\PointLight.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\includes\utils.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\resources\container.jpg">
@@ -92,6 +95,12 @@
     </Image>
     <Image Include="..\resources\backpack\specular.jpg">
       <Filter>resource\backpack</Filter>
+    </Image>
+    <Image Include="..\resources\marble.jpg">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\resources\metal.png">
+      <Filter>resource</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>

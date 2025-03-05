@@ -1,13 +1,11 @@
 #pragma once
 
 #include "glad.h"
-         
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
 #include <string>
 #include <vector>
-
 #include "shader.h"
 
 using namespace std;
@@ -91,7 +89,7 @@ void Mesh::Draw(Shader& shader)
         else if (name == "texture_specular")
             number = std::to_string(specularNr++);
 
-        shader.setInt(("material." + name + number).c_str(), i);
+        shader.setInt("material." + name + number, i);
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
     }
 
@@ -100,7 +98,7 @@ void Mesh::Draw(Shader& shader)
     if (this->indices.size() > 0)
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     else
-		glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
     glBindVertexArray(0);
 
     glActiveTexture(GL_TEXTURE0);
