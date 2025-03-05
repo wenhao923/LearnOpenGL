@@ -27,10 +27,14 @@
     <ClInclude Include="..\includes\camera.h" />
     <ClInclude Include="..\includes\glad.h" />
     <ClInclude Include="..\includes\khrplatform.h" />
+    <ClInclude Include="..\includes\PointLight.h" />
     <ClInclude Include="..\includes\mesh.h" />
     <ClInclude Include="..\includes\model.h" />
+    <ClInclude Include="..\includes\OpenGLWindow.h" />
     <ClInclude Include="..\includes\shader.h" />
     <ClInclude Include="..\includes\stb_image.h" />
+    <ClInclude Include="..\includes\Light.h" />
+    <ClInclude Include="..\includes\Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\resources\awesomeface.png" />

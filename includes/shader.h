@@ -1,5 +1,4 @@
-#ifndef SHADER_H
-#define SHADER_H
+#pragma once
 
 #include "glad.h"   // 包含glad来获取所有的必须OpenGL头文件
 #include "glm/glm.hpp"
@@ -8,6 +7,8 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+
+#include "PointLight.h"
 
 
 class Shader
@@ -112,6 +113,31 @@ public:
         glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
     }
 
+    void setupShader(const std::vector<std::shared_ptr<Light>> lights, const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection) {
+        this->use();
+        this->setMat4("model", model);
+        this->setMat4("view", view);
+        this->setMat4("projection", projection);
+
+        unsigned int DirNr = 0;
+        unsigned int pointNr = 0;
+        for (unsigned int i = 0; i < lights.size(); i++) {
+            auto light = lights[i];
+            // 点光源
+            if (light->GetType() == LightType::Point) {
+                const auto pointLight = std::dynamic_pointer_cast<PointLight>(light);
+                this->setVec3("pointLights[" + std::to_string(pointNr) + "].position", pointLight->position);
+                this->setVec3("pointLights[" + std::to_string(pointNr) + "].ambient", pointLight->color);
+                this->setVec3("pointLights[" + std::to_string(pointNr) + "].diffuse", pointLight->color);
+                this->setVec3("pointLights[" + std::to_string(pointNr) + "].specular", pointLight->color);
+                this->setFloat("pointLights[" + std::to_string(pointNr) + "].constant", pointLight->att.constant);
+                this->setFloat("pointLights[" + std::to_string(pointNr) + "].linear", pointLight->att.linear);
+                this->setFloat("pointLights[" + std::to_string(pointNr) + "].quadratic", pointLight->att.quadratic);
+                pointNr++;
+            }
+        }
+    }
+
 private:
     void checkCompileErrors(unsigned int shader, std::string type)
     {
@@ -137,7 +163,3 @@ private:
         }
     }
 };
-
-
-
-#endif

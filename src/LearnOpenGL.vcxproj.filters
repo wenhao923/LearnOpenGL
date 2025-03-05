@@ -49,6 +49,18 @@
     <ClInclude Include="..\includes\model.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\includes\OpenGLWindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\Texture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\Light.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\includes\PointLight.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\resources\container.jpg">

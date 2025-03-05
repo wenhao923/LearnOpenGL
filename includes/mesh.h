@@ -1,5 +1,4 @@
-#ifndef MESH_H
-#define MESH_H
+#pragma once
 
 #include "glad.h"
          
@@ -10,7 +9,6 @@
 #include <vector>
 
 #include "shader.h"
-
 
 using namespace std;
 
@@ -33,7 +31,7 @@ public:
     vector<unsigned int> indices;
     vector<Texture> textures;
     /*  函数  */
-    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures);
+    Mesh(vector<Vertex> vertices, vector<unsigned int> indices = {}, vector<Texture> textures = {});
     void Draw(Shader& shader);
 private:
     /*  渲染数据  */
@@ -99,10 +97,11 @@ void Mesh::Draw(Shader& shader)
 
     // 绘制网格
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    if (this->indices.size() > 0)
+        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    else
+		glDrawArrays(GL_TRIANGLES, 0, vertices.size());
     glBindVertexArray(0);
 
     glActiveTexture(GL_TEXTURE0);
 }
-
-#endif
