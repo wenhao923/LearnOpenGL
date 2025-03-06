@@ -27,6 +27,11 @@ public:
         stbi_set_flip_vertically_on_load(flipVertically);
         this->type = type;
 
+        size_t lastSlashPos = path.find_last_of("/");
+        if (lastSlashPos != std::string::npos) {
+            this->path = path.substr(lastSlashPos + 1);
+        }
+        
         int width, height, nrChannels;
         unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
         if (!data) {
@@ -39,11 +44,11 @@ public:
             internalFormat = dataFormat = GL_RED;
         }
         else if (nrChannels == 3) {
-            internalFormat = GL_SRGB;
+            internalFormat = GL_RGB;
             dataFormat = GL_RGB;
         }
         else if (nrChannels == 4) {
-            internalFormat = GL_SRGB_ALPHA;
+            internalFormat = GL_RGBA;
             dataFormat = GL_RGBA;
         }
         else {
@@ -86,7 +91,10 @@ public:
     
     std::string GetType() const { return type; }
 
+    std::string GetPath() const { return path; }
+
 private:
     GLuint ID = 0; // Œ∆¿ÌID
     std::string type;
+    std::string path;
 };

@@ -27,11 +27,14 @@ int main() {
 	window.setCamera(&myCamera);
 
 	glEnable(GL_DEPTH_TEST);
-	stbi_set_flip_vertically_on_load(true);
+	//glDepthMask(GL_FALSE);
+	glDepthFunc(GL_LESS);
 
-	myTexture planeMap;
+	// Texture
+	myTexture planeTex, cubeTex;
 	try {
-		planeMap.LoadFromFile("../resources/marble.jpg", "texture_diffuse");
+		cubeTex.LoadFromFile("../resources/marble.jpg", "texture_diffuse");
+		planeTex.LoadFromFile("../resources/metal.png", "texture_diffuse");
 	}
 	catch (const std::exception& e) {
 		std::cerr << e.what() << std::endl;
@@ -40,6 +43,10 @@ int main() {
 
 	glViewport(0, 0, screenWidth, screenHeight);
 
+	// 材质，可以通用
+	Shader depethShader("../resources/shaders/shader.vert", "../resources/shaders/objectshader.frag");
+
+	// 地面
 	float planeVertices[] = {
 		// positions          // texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
 		 5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
@@ -51,24 +58,66 @@ int main() {
 		 5.0f, -0.5f, -5.0f,  2.0f, 2.0f
 	};
 	Texture planeTexture;
-	planeTexture.id = planeMap.GetID();
-	planeTexture.type = planeMap.GetType();
-	auto veticesVec = convertToVector(planeVertices, 5 * 6, 5);
-	Mesh plane(veticesVec, generateIndices(veticesVec), {planeTexture});
-	Shader planeShader("../resources/shaders/shader.vert", "../resources/shaders/objectshader.frag");
+	planeTexture.id = planeTex.GetID();
+	planeTexture.type = planeTex.GetType();
+	planeTexture.path = planeTex.GetPath();
+	auto verticesVec = convertToVector(planeVertices, 6 * 5, 5);
+	Mesh plane(verticesVec, generateIndices(verticesVec), {planeTexture});
 
-	stbi_set_flip_vertically_on_load(true);
-	// 准备资源：顶点数据、texture
-	Model ourModel("../resources/backpack/backpack.obj");
-	// 创建模型对应的Shader
-	Shader backPackShader("../resources/shaders/backPackshader.vert", "../resources/shaders/backPackshader.frag");
+	// cube
+	float cubeVertices[] = {
+		// positions          // texture Coords
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 
-	// 创建光源数组
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f 
+	};
+	Texture cubeTexture;
+	cubeTexture.id = cubeTex.GetID();
+	cubeTexture.type = cubeTex.GetType();
+	cubeTexture.path = cubeTex.GetPath();
+	verticesVec = convertToVector(cubeVertices, 36 * 5, 5);
+	Mesh cube(verticesVec, generateIndices(verticesVec), { cubeTexture });
+
+	// Light
 	std::vector<std::shared_ptr<Light>> Lights;
-	// 创建点光源
-	attenuation att = { 1.0f, 0.09f, 0.032f };
-	auto pointLight = std::make_shared<PointLight>(glm::vec3(1.2f, 1.0f, 2.0f), att);
-	Lights.push_back(pointLight);
 
 	while (!window.shouldClose()) {
 		static float lastFrame = 0.0f;
@@ -79,37 +128,36 @@ int main() {
 		window.setDeltaTime(deltaTime);
 		window.processInput();
 
-		glClearColor(0.01f, 0.1f, 0.1f, 0.1f);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// 所有场景公用一个view / Projection
 		glm::mat4 view = myCamera.GetViewMatrix();
 		glm::mat4 projection = glm::mat4(1.0f);
         projection = glm::perspective(glm::radians(myCamera.Zoom), (float)screenWidth / screenHeight, 0.1f, 100.0f);
-		
-		// render the loaded model
 		glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+		// render the loaded model
+		depethShader.use();
+		depethShader.setupShader(Lights, model, view, projection);
+		depethShader.setVec3("viewPos", myCamera.Position);
 
-		backPackShader.use();
-		backPackShader.setupShader(Lights, model, view, projection);
-		backPackShader.setVec3("viewPos", myCamera.Position);
+		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
+		depethShader.setMat4("model", model);
+		cube.Draw(depethShader);
 
-		ourModel.Draw(backPackShader);
+		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
+		depethShader.setMat4("model", model);
+		cube.Draw(depethShader);
 
-		planeShader.use();
-		planeShader.setupShader(Lights, model, view, projection);
-		planeShader.setVec3("viewPos", myCamera.Position);
-
-		plane.Draw(planeShader);
+		model = glm::mat4(1.0f);
+		depethShader.setMat4("model", model);
+		plane.Draw(depethShader);
 
 		window.swapBuffers();
 		window.pollEvents();
 	}
 
 	// 清理资源
-	glDeleteProgram(backPackShader.ID);
 
 	window.terminate();
 	return 0;
