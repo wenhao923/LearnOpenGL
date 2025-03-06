@@ -21,7 +21,8 @@ float LinearizeDepth(float depth)
 
 void main()
 {   
-    FragColor = texture(material.texture_diffuse1, TexCoords);
+    vec4 texColor = texture(material.texture_diffuse1, TexCoords);
+    FragColor = texColor;
 
     //float depth = LinearizeDepth(gl_FragCoord.z) / far; // 为了演示除以 far
     //FragColor = vec4(vec3(depth), 1.0);

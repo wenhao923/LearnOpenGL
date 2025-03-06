@@ -44,9 +44,11 @@
     <Image Include="..\resources\backpack\normal.png" />
     <Image Include="..\resources\backpack\roughness.jpg" />
     <Image Include="..\resources\backpack\specular.jpg" />
+    <Image Include="..\resources\blending_transparent_window.png" />
     <Image Include="..\resources\container.jpg" />
     <Image Include="..\resources\container2.png" />
     <Image Include="..\resources\container2_specular.png" />
+    <Image Include="..\resources\grass.png" />
     <Image Include="..\resources\marble.jpg" />
     <Image Include="..\resources\matrix.jpg" />
     <Image Include="..\resources\metal.png" />
@@ -56,7 +58,9 @@
     <None Include="..\resources\shaders\backPackshader.frag" />
     <None Include="..\resources\shaders\backPackshader.vert" />
     <None Include="..\resources\shaders\lampshader.frag" />
+    <None Include="..\resources\shaders\fboshader.frag" />
     <None Include="..\resources\shaders\objectshader.frag" />
+    <None Include="..\resources\shaders\fboshader.vert" />
     <None Include="..\resources\shaders\shader.vert" />
   </ItemGroup>
   <ItemGroup>
@@ -159,6 +163,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

@@ -73,7 +73,7 @@ public:
     }
 
     // 设置环绕方式
-    void SetWrap(GLint wrapS, GLint wrapT = GL_REPEAT) {
+    void SetWrap(GLint wrapS = GL_REPEAT, GLint wrapT = GL_REPEAT) {
         Bind();
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT);

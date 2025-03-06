@@ -102,6 +102,12 @@
     <Image Include="..\resources\metal.png">
       <Filter>resource</Filter>
     </Image>
+    <Image Include="..\resources\blending_transparent_window.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\resources\grass.png">
+      <Filter>resource</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resources\shaders\objectshader.frag">
@@ -120,6 +126,12 @@
       <Filter>resource</Filter>
     </None>
     <None Include="..\resources\shaders\backPackshader.vert">
+      <Filter>resource</Filter>
+    </None>
+    <None Include="..\resources\shaders\fboshader.frag">
+      <Filter>resource</Filter>
+    </None>
+    <None Include="..\resources\shaders\fboshader.vert">
       <Filter>resource</Filter>
     </None>
   </ItemGroup>
