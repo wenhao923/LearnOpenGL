@@ -188,12 +188,12 @@ int main() {
 	float quadVertices[] = {
 		// positions   // texCoords
 		-1.0f,  1.0f,  0.0f, 1.0f,
-		-1.0f, -1.0f,  0.0f, 0.0f,
-		 1.0f, -1.0f,  1.0f, 0.0f,
+		-1.0f, 0.0f,  0.0f, 0.0f,
+		 0.0f, 0.0f,  1.0f, 0.0f,
 
 		-1.0f,  1.0f,  0.0f, 1.0f,
-		 1.0f, -1.0f,  1.0f, 0.0f,
-		 1.0f,  1.0f,  1.0f, 1.0f
+		 0.0f, 0.0f,  1.0f, 0.0f,
+		 0.0f,  1.0f,  1.0f, 1.0f
 	};
 	unsigned int quadVAO, quadVBO;
 	glGenVertexArrays(1, &quadVAO);
@@ -212,11 +212,13 @@ int main() {
 		float deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-		glEnable(GL_DEPTH_TEST);
-		glDepthMask(GL_TRUE);
-		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 		window.setDeltaTime(deltaTime);
 		window.processInput();
+
+		// 主屏幕
+		glEnable(GL_DEPTH_TEST);
+		glDepthMask(GL_TRUE);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -267,18 +269,66 @@ int main() {
 			grass.Draw(depethShader);
 		}
 
+		// 后视镜
+		glEnable(GL_DEPTH_TEST);
+		glDepthMask(GL_TRUE);
+		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// 所有场景公用一个view / Projection
+		myCamera.setBackCamera();
+		view = myCamera.GetViewMatrix();
+		projection = glm::mat4(1.0f);
+		projection = glm::perspective(glm::radians(myCamera.Zoom), (float)screenWidth / screenHeight, 0.1f, 100.0f);
+		model = glm::mat4(1.0f);
+		// render the loaded model
+		depethShader.use();
+		depethShader.setupShader(Lights, model, view, projection);
+		depethShader.setVec3("viewPos", myCamera.Position);
+
+		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
+		depethShader.setMat4("model", model);
+		cube.Draw(depethShader);
+
+		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
+		depethShader.setMat4("model", model);
+		cube.Draw(depethShader);
+
+		model = glm::mat4(1.0f);
+		depethShader.setMat4("model", model);
+		plane.Draw(depethShader);
+
+		std::map<float, glm::vec3> sorted2;
+		for (unsigned int i = 0; i < position.size(); i++)
+		{
+			float distance = glm::length(myCamera.Position.z - position[i].z);
+			sorted2[distance] = position[i];
+		}
+
+		glDepthMask(GL_FALSE);
+		for (auto it = sorted2.rbegin(); it != sorted2.rend(); ++it) {
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, it->second);
+			depethShader.setMat4("model", model);
+			grass.Draw(depethShader);
+		}
+		myCamera.setBackCamera();
+
 		// pass2
 		glDisable(GL_DEPTH_TEST);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		//glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		//glClear(GL_COLOR_BUFFER_BIT);
 
 		fboShader.use();
-		fboShader.setInt("material.texture_diffuse1", 0);
-		fboShader.setFloat("screenWidth", screenWidth);
-		fboShader.setFloat("screenHeight", screenHeight);
 		glBindVertexArray(quadVAO);
 		glBindTexture(GL_TEXTURE_2D, texColorBuffer);
+
+		fboShader.setInt("texture_diffuse1", 0);
+		fboShader.setFloat("screenWidth", screenWidth);
+		fboShader.setFloat("screenHeight", screenHeight);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		window.swapBuffers();
