@@ -62,6 +62,8 @@
     <None Include="..\resources\shaders\objectshader.frag" />
     <None Include="..\resources\shaders\fboshader.vert" />
     <None Include="..\resources\shaders\shader.vert" />
+    <None Include="..\resources\shaders\skyboxshader.frag" />
+    <None Include="..\resources\shaders\skyboxshader.vert" />
   </ItemGroup>
   <ItemGroup>
     <Object Include="..\resources\backpack\backpack.obj">

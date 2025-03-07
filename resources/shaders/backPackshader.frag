@@ -39,7 +39,7 @@ void main()
     vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(viewPos - FragPos);
 
-    vec3 result = vec3(0.0);
+    vec3 result = texture(material.texture_diffuse1, TexCoords).rgb;
     for(int i = 0; i < NR_POINT_LIGHTS; i++) {
         if (pointLights[i].constant != 0)
             result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);

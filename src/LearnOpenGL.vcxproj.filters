@@ -15,6 +15,12 @@
     <Filter Include="resource\backpack">
       <UniqueIdentifier>{b10cf77e-24b6-431c-a745-bef4d803bd0a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resource\shaders">
+      <UniqueIdentifier>{733c78a2-7c21-4fe8-bf93-6abcab723e6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resource\images">
+      <UniqueIdentifier>{ac154276-004c-4e91-9e74-0dda8f6862ca}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -66,21 +72,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\resources\container.jpg">
-      <Filter>resource</Filter>
-    </Image>
-    <Image Include="..\resources\awesomeface.png">
-      <Filter>resource</Filter>
-    </Image>
-    <Image Include="..\resources\container2.png">
-      <Filter>resource</Filter>
-    </Image>
-    <Image Include="..\resources\container2_specular.png">
-      <Filter>resource</Filter>
-    </Image>
-    <Image Include="..\resources\matrix.jpg">
-      <Filter>resource</Filter>
-    </Image>
     <Image Include="..\resources\backpack\ao.jpg">
       <Filter>resource\backpack</Filter>
     </Image>
@@ -96,43 +87,64 @@
     <Image Include="..\resources\backpack\specular.jpg">
       <Filter>resource\backpack</Filter>
     </Image>
-    <Image Include="..\resources\marble.jpg">
-      <Filter>resource</Filter>
-    </Image>
-    <Image Include="..\resources\metal.png">
-      <Filter>resource</Filter>
+    <Image Include="..\resources\awesomeface.png">
+      <Filter>resource\images</Filter>
     </Image>
     <Image Include="..\resources\blending_transparent_window.png">
-      <Filter>resource</Filter>
+      <Filter>resource\images</Filter>
+    </Image>
+    <Image Include="..\resources\container.jpg">
+      <Filter>resource\images</Filter>
+    </Image>
+    <Image Include="..\resources\container2.png">
+      <Filter>resource\images</Filter>
+    </Image>
+    <Image Include="..\resources\container2_specular.png">
+      <Filter>resource\images</Filter>
     </Image>
     <Image Include="..\resources\grass.png">
-      <Filter>resource</Filter>
+      <Filter>resource\images</Filter>
+    </Image>
+    <Image Include="..\resources\marble.jpg">
+      <Filter>resource\images</Filter>
+    </Image>
+    <Image Include="..\resources\matrix.jpg">
+      <Filter>resource\images</Filter>
+    </Image>
+    <Image Include="..\resources\metal.png">
+      <Filter>resource\images</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\resources\shaders\objectshader.frag">
-      <Filter>resource</Filter>
-    </None>
-    <None Include="..\resources\shaders\shader.vert">
-      <Filter>resource</Filter>
-    </None>
-    <None Include="..\resources\shaders\lampshader.frag">
-      <Filter>resource</Filter>
-    </None>
     <None Include="..\resources\backpack\backpack.mtl">
       <Filter>resource\backpack</Filter>
     </None>
-    <None Include="..\resources\shaders\backPackshader.frag">
-      <Filter>resource</Filter>
-    </None>
-    <None Include="..\resources\shaders\backPackshader.vert">
-      <Filter>resource</Filter>
-    </None>
     <None Include="..\resources\shaders\fboshader.frag">
-      <Filter>resource</Filter>
+      <Filter>resource\shaders</Filter>
     </None>
     <None Include="..\resources\shaders\fboshader.vert">
-      <Filter>resource</Filter>
+      <Filter>resource\shaders</Filter>
+    </None>
+    <None Include="..\resources\shaders\backPackshader.frag">
+      <Filter>resource\shaders</Filter>
+    </None>
+    <None Include="..\resources\shaders\backPackshader.vert">
+      <Filter>resource\shaders</Filter>
+    </None>
+    <None Include="..\resources\shaders\objectshader.frag">
+      <Filter>resource\shaders</Filter>
+    </None>
+    <None Include="..\resources\shaders\shader.vert">
+      <Filter>resource\shaders</Filter>
+    </None>
+    <None Include="..\resources\shaders\lampshader.frag">
+      <Filter>resource\shaders</Filter>
+    </None>
+    <None Include="..\resources\shaders\skyboxshader.frag">
+      <Filter>resource\shaders</Filter>
+    </None>
+    <None Include="..\resources\shaders\skyboxshader.vert">
+      <Filter>resource\shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
