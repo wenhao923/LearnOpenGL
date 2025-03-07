@@ -31,6 +31,7 @@ in vec2 TexCoords;
 uniform PointLight pointLights[NR_POINT_LIGHTS];
 uniform Material material;
 uniform vec3 viewPos;
+uniform samplerCube skybox;
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
@@ -39,11 +40,17 @@ void main()
     vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(viewPos - FragPos);
 
+    // ²ÉÑù·´ÉäÌùÍ¼
+    vec3 cube_uv = normalize(reflect(viewDir, norm));
+    vec3 ref = texture(material.texture_diffuse2, TexCoords).rgb * texture(skybox, cube_uv).rgb;
+
     vec3 result = texture(material.texture_diffuse1, TexCoords).rgb;
     for(int i = 0; i < NR_POINT_LIGHTS; i++) {
         if (pointLights[i].constant != 0)
             result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);
     } 
+    
+    result += ref;
 
     FragColor = vec4(result, 1.0);
 };

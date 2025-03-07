@@ -50,10 +50,10 @@ int main() {
 	// 材质，可以通用
 	Shader backPackShader("../resources/shaders/backPackshader.vert", "../resources/shaders/backPackshader.frag");
 	Shader skyboxShader("../resources/shaders/skyboxshader.vert", "../resources/shaders/skyboxshader.frag");
-	
-	stbi_set_flip_vertically_on_load(true);
-	Model bag("../resources/backpack/backpack.obj");
 
+
+	stbi_set_flip_vertically_on_load(false);
+	Model nanosuit("../resources/nanosuit_reflection/nanosuit.obj");
 	float skyvertices[] = {
 		// positions          
 				-1.0f,  1.0f, -1.0f,
@@ -136,9 +136,13 @@ int main() {
         projection = glm::perspective(glm::radians(myCamera.Zoom), (float)screenWidth / screenHeight, 0.1f, 100.0f);
 		glm::mat4 model = glm::mat4(1.0f);
 
-		// 背包 draw
-		backPackShader.setupShader(Lights, model, view, projection);
-		bag.Draw(backPackShader);
+		// 模型 draw
+		backPackShader.setupShader(Lights, glm::translate(glm::scale(model, glm::vec3(0.1)), glm::vec3(0.0, -12.0, 0.0)), view, projection);
+		backPackShader.setVec3("viewPos", myCamera.Position);
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+		backPackShader.setInt("skybox", 3);
+		nanosuit.Draw(backPackShader);
 
 		// 天空盒子 draw
 		glDepthFunc(GL_LEQUAL);

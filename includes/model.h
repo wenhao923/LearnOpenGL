@@ -125,7 +125,10 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
         textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
         vector<Texture> specularMaps = loadMaterialTextures(material,
             aiTextureType_SPECULAR, "texture_specular");
-        textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+        textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());        
+        vector<Texture> reflectMaps = loadMaterialTextures(material,
+            aiTextureType_AMBIENT, "texture_diffuse");
+        textures.insert(textures.end(), reflectMaps.begin(), reflectMaps.end());
     }
 
     return Mesh(vertices, indices, textures);
