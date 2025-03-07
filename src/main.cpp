@@ -26,6 +26,7 @@ int main() {
 	Camera myCamera = Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 	window.setCamera(&myCamera);
 
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 	glEnable(GL_BLEND);
@@ -64,23 +65,24 @@ int main() {
 	// 将它附加到当前绑定的帧缓冲对象
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texColorBuffer, 0);
 
-	unsigned int depthBuffer;
-	glGenTextures(1, &depthBuffer);
-	glBindTexture(GL_TEXTURE_2D, depthBuffer);
-	glTexImage2D(
-		GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, 800, 600, 0,
-		GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL
-	);
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthBuffer, 0);
+	//unsigned int depthBuffer;
+	//glGenTextures(1, &depthBuffer);
+	//glBindTexture(GL_TEXTURE_2D, depthBuffer);
+	//glTexImage2D(
+	//	GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, 800, 600, 0,
+	//	GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL
+	//);
+	//glBindTexture(GL_TEXTURE_2D, 0);
+	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthBuffer, 0);
 
 	// RBO
-	//unsigned int rbo;
-	//glGenFramebuffers(1, &rbo);
-	//glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-	//glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH, 800, 600);
+	unsigned int rbo;
+	glGenRenderbuffers(1, &rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-	//glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
@@ -204,16 +206,15 @@ int main() {
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	while (!window.shouldClose()) {
 		static float lastFrame = 0.0f;
 		float currentFrame = static_cast<float>(glfwGetTime());
 		float deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 		glEnable(GL_DEPTH_TEST);
 		glDepthMask(GL_TRUE);
+		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 		window.setDeltaTime(deltaTime);
 		window.processInput();
 
@@ -236,12 +237,11 @@ int main() {
 
 		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
 		depethShader.setMat4("model", model);
-		//cube.Draw(depethShader);
+		cube.Draw(depethShader);	
 
 		model = glm::mat4(1.0f);
 		depethShader.setMat4("model", model);
-		plane.Draw(depethShader);		
-		
+		plane.Draw(depethShader);
 
 		vector<glm::vec3> position
 		{
