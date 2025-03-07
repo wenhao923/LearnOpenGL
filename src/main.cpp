@@ -275,6 +275,8 @@ int main() {
 
 		fboShader.use();
 		fboShader.setInt("material.texture_diffuse1", 0);
+		fboShader.setFloat("screenWidth", screenWidth);
+		fboShader.setFloat("screenHeight", screenHeight);
 		glBindVertexArray(quadVAO);
 		glBindTexture(GL_TEXTURE_2D, texColorBuffer);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
