@@ -41,8 +41,13 @@ void main()
     vec3 viewDir = normalize(viewPos - FragPos);
 
     // 采样反射贴图
-    vec3 cube_uv = normalize(reflect(viewDir, norm));
-    vec3 ref = texture(material.texture_diffuse2, TexCoords).rgb * texture(skybox, cube_uv).rgb;
+    vec3 reflect_uv = normalize(reflect(viewDir, norm));
+    vec3 reflect_color = texture(material.texture_diffuse2, TexCoords).rgb * texture(skybox, reflect_uv).rgb;
+
+    // 折射光线
+    float ratio = 1.00 / 1.52;
+    vec3 refract_uv = normalize(refract(-viewDir, norm, ratio));
+    vec3 refract_color = texture(skybox, refract_uv).rgb;
 
     vec3 result = texture(material.texture_diffuse1, TexCoords).rgb;
     for(int i = 0; i < NR_POINT_LIGHTS; i++) {
@@ -50,9 +55,9 @@ void main()
             result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);
     } 
     
-    result += ref;
+    result += reflect_color;
 
-    FragColor = vec4(result, 1.0);
+    FragColor = vec4(refract_color, 1.0);
 };
 
 // calculates the color when using a point light.
