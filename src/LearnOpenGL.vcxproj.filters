@@ -227,6 +227,15 @@
     <None Include="..\resources\shaders\explode.geom">
       <Filter>resource\shaders</Filter>
     </None>
+    <None Include="..\resources\shaders\displayNormal.frag">
+      <Filter>resource\shaders</Filter>
+    </None>
+    <None Include="..\resources\shaders\displayNormal.geom">
+      <Filter>resource\shaders</Filter>
+    </None>
+    <None Include="..\resources\shaders\displayNormal.vert">
+      <Filter>resource\shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Object Include="..\resources\backpack\backpack.obj">

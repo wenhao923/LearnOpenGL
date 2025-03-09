@@ -35,10 +35,13 @@ int main() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	//glEnable(GL_CULL_FACE);
 
+	// 显示法线
+	Shader displayNormalShader("../resources/shaders/displayNormal.vert", "../resources/shaders/displayNormal.frag", "../resources/shaders/displayNormal.geom");
+
 	stbi_set_flip_vertically_on_load(false);
 	// 模型资源
 	Model nanosuit("../resources/nanosuit_reflection/nanosuit.obj");
-	Shader backPackShader("../resources/shaders/backPackshader.vert", "../resources/shaders/backPackshader.frag", "../resources/shaders/explode.geom");
+	Shader backPackShader("../resources/shaders/backPackshader.vert", "../resources/shaders/backPackshader.frag");
 	
 	// 天空盒资源
 	vector<std::string> faces
@@ -161,8 +164,13 @@ int main() {
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
 		backPackShader.setInt("skybox", 3);
-		backPackShader.setFloat("time", currentFrame);
+		//backPackShader.setFloat("time", currentFrame);
 		nanosuit.Draw(backPackShader);
+		// 法线 draw
+		displayNormalShader.setMat4("model", glm::translate(glm::scale(model, glm::vec3(0.1f)), glm::vec3(0.0, -5.0, 0.0)));
+		displayNormalShader.setMat4("view", view);
+		displayNormalShader.setMat4("projection", projection);
+		nanosuit.Draw(displayNormalShader);
 
 		// 天空盒子 draw
 		glDepthFunc(GL_LEQUAL);

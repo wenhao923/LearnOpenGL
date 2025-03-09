@@ -82,6 +82,9 @@
     <None Include="..\resources\nanosuit_reflection\nanosuit.mtl" />
     <None Include="..\resources\shaders\backPackshader.frag" />
     <None Include="..\resources\shaders\backPackshader.vert" />
+    <None Include="..\resources\shaders\displayNormal.frag" />
+    <None Include="..\resources\shaders\displayNormal.geom" />
+    <None Include="..\resources\shaders\displayNormal.vert" />
     <None Include="..\resources\shaders\explode.geom" />
     <None Include="..\resources\shaders\lampshader.frag" />
     <None Include="..\resources\shaders\fboshader.frag" />
