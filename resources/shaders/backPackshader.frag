@@ -55,9 +55,9 @@ void main()
             result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);
     } 
     
-    result += reflect_color;
+    //result += reflect_color;
 
-    FragColor = vec4(refract_color, 1.0);
+    FragColor = vec4(result, 1.0);
 };
 
 // calculates the color when using a point light.

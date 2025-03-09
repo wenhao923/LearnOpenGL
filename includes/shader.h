@@ -78,38 +78,45 @@ public:
         glDeleteShader(fragment);
     }
 
-    void use()
+    void use() const
     {
         glUseProgram(ID);
     }
     void setBool(const std::string& name, bool value) const
     {
+        this->use();
         glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
     }
     void setInt(const std::string& name, int value) const
     {
+        this->use();
         glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
     }
     void setFloat(const std::string& name, float value) const
     {
+        this->use();
         glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
     }
     void setVec3(const std::string& name, const glm::vec3& vec) const
     {
+        this->use();
         glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, &vec[0]);
     }
     void setMat2(const std::string& name, const glm::mat2& mat) const
     {
+        this->use();
         glUniformMatrix2fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
     }
     // ------------------------------------------------------------------------
     void setMat3(const std::string& name, const glm::mat3& mat) const
     {
+        this->use();
         glUniformMatrix3fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
     }
     // ------------------------------------------------------------------------
     void setMat4(const std::string& name, const glm::mat4& mat) const
     {
+        this->use();
         glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
     }
 

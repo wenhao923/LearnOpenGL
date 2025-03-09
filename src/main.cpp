@@ -35,7 +35,12 @@ int main() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	//glEnable(GL_CULL_FACE);
 
-	// cubeMap
+	stbi_set_flip_vertically_on_load(false);
+	// 模型资源
+	Model nanosuit("../resources/nanosuit_reflection/nanosuit.obj");
+	Shader backPackShader("../resources/shaders/backPackshader.vert", "../resources/shaders/backPackshader.frag");
+	
+	// 天空盒资源
 	vector<std::string> faces
 	{
 		"../resources/skybox/right.jpg",
@@ -47,13 +52,8 @@ int main() {
 	};
 	unsigned int cubemapTexture = loadCubemap(faces);
 
-	// 材质，可以通用
-	Shader backPackShader("../resources/shaders/backPackshader.vert", "../resources/shaders/backPackshader.frag");
 	Shader skyboxShader("../resources/shaders/skyboxshader.vert", "../resources/shaders/skyboxshader.frag");
 
-
-	stbi_set_flip_vertically_on_load(false);
-	Model nanosuit("../resources/nanosuit_reflection/nanosuit.obj");
 	float skyvertices[] = {
 		// positions          
 				-1.0f,  1.0f, -1.0f,
@@ -108,6 +108,20 @@ int main() {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glBindVertexArray(0);
 
+	// ubo 
+	unsigned int uniformBlockIndexMod = glGetUniformBlockIndex(backPackShader.ID, "Matrices");
+
+	glUniformBlockBinding(backPackShader.ID, uniformBlockIndexMod, 0);
+
+	unsigned int uboMatrices;
+	glGenBuffers(1, &uboMatrices);
+
+	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+	glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), NULL, GL_STATIC_DRAW);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+	glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 2 * sizeof(glm::mat4));
+
 	// Light
 	std::vector<std::shared_ptr<Light>> Lights;
 	attenuation att = { 1.0f, 0.09f, 0.032f };
@@ -134,10 +148,15 @@ int main() {
 		glm::mat4 view = myCamera.GetViewMatrix();
 		glm::mat4 projection = glm::mat4(1.0f);
         projection = glm::perspective(glm::radians(myCamera.Zoom), (float)screenWidth / screenHeight, 0.1f, 100.0f);
+		glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
+		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(view));
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+		
 		glm::mat4 model = glm::mat4(1.0f);
 
 		// 模型 draw
-		backPackShader.setupShader(Lights, glm::translate(glm::scale(model, glm::vec3(0.1)), glm::vec3(0.0, -12.0, 0.0)), view, projection);
+		backPackShader.setMat4("model", model);
 		backPackShader.setVec3("viewPos", myCamera.Position);
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
