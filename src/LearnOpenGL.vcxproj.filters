@@ -224,6 +224,9 @@
     <None Include="..\resources\nanosuit_reflection\nanosuit.mtl">
       <Filter>resource\nanosuit</Filter>
     </None>
+    <None Include="..\resources\shaders\explode.geom">
+      <Filter>resource\shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Object Include="..\resources\backpack\backpack.obj">

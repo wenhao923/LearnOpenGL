@@ -38,7 +38,7 @@ int main() {
 	stbi_set_flip_vertically_on_load(false);
 	// 模型资源
 	Model nanosuit("../resources/nanosuit_reflection/nanosuit.obj");
-	Shader backPackShader("../resources/shaders/backPackshader.vert", "../resources/shaders/backPackshader.frag");
+	Shader backPackShader("../resources/shaders/backPackshader.vert", "../resources/shaders/backPackshader.frag", "../resources/shaders/explode.geom");
 	
 	// 天空盒资源
 	vector<std::string> faces
@@ -156,11 +156,12 @@ int main() {
 		glm::mat4 model = glm::mat4(1.0f);
 
 		// 模型 draw
-		backPackShader.setMat4("model", model);
+		backPackShader.setMat4("model", glm::translate(glm::scale(model, glm::vec3(0.1f)), glm::vec3(0.0, -5.0, 0.0)));
 		backPackShader.setVec3("viewPos", myCamera.Position);
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
 		backPackShader.setInt("skybox", 3);
+		backPackShader.setFloat("time", currentFrame);
 		nanosuit.Draw(backPackShader);
 
 		// 天空盒子 draw
