@@ -236,6 +236,12 @@
     <None Include="..\resources\shaders\displayNormal.vert">
       <Filter>resource\shaders</Filter>
     </None>
+    <None Include="..\resources\shaders\instance.frag">
+      <Filter>resource\shaders</Filter>
+    </None>
+    <None Include="..\resources\shaders\instance.vert">
+      <Filter>resource\shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Object Include="..\resources\backpack\backpack.obj">

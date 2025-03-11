@@ -131,6 +131,31 @@ int main() {
 	auto pointLight = std::make_shared<PointLight>(glm::vec3(2.0f, 3.0f, 2.0f), att);
 	Lights.push_back(pointLight);
 
+	// GPU instance
+	float quadVertices[] = {
+		// 位置          // 颜色
+		-0.05f,  0.05f,  1.0f, 0.0f, 0.0f,
+		 0.05f, -0.05f,  0.0f, 1.0f, 0.0f,
+		-0.05f, -0.05f,  0.0f, 0.0f, 1.0f,
+
+		-0.05f,  0.05f,  1.0f, 0.0f, 0.0f,
+		 0.05f, -0.05f,  0.0f, 1.0f, 0.0f,
+		 0.05f,  0.05f,  0.0f, 1.0f, 1.0f
+	};
+	unsigned int instanceVAO, instanceVBO;
+	glGenVertexArrays(1, &instanceVAO);
+	glGenBuffers(1, &instanceVBO);
+	glBindVertexArray(instanceVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
+	glBindVertexArray(0);
+
+	Shader instanceShader("../resources/shaders/instance.vert", "../resources/shaders/instance.frag");
+
 	while (!window.shouldClose()) {
 		static float lastFrame = 0.0f;
 		float currentFrame = static_cast<float>(glfwGetTime());
@@ -171,6 +196,28 @@ int main() {
 		displayNormalShader.setMat4("view", view);
 		displayNormalShader.setMat4("projection", projection);
 		nanosuit.Draw(displayNormalShader);
+
+		// instance draw
+		glm::vec2 translations[100];
+		int index = 0;
+		float offset = 0.1f;
+		for (int y = -10; y < 10; y += 2)
+		{
+			for (int x = -10; x < 10; x += 2)
+			{
+				glm::vec2 translation;
+				translation.x = (float)x / 10.0f + offset;
+				translation.y = (float)y / 10.0f + offset;
+				translations[index++] = translation;
+			}
+		}
+		instanceShader.use();
+		for (unsigned int i = 0; i < 100; i++)
+		{
+			instanceShader.setVec2(("offsets[" + std::to_string(i) + "]"), translations[i]);
+		}
+		glBindVertexArray(instanceVAO);
+		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, 100);
 
 		// 天空盒子 draw
 		glDepthFunc(GL_LEQUAL);
