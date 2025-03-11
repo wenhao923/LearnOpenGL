@@ -171,10 +171,10 @@ int main() {
 	unsigned int instancedArrayVBO;
 	glGenBuffers(1, &instancedArrayVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, instancedArrayVBO);
-	glBufferData(GL_ARRAY_BUFFER, 2 * sizeof(float) * 100, &translations[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(translations), translations, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glVertexAttribDivisor(2, 1);
 	glBindVertexArray(0);
