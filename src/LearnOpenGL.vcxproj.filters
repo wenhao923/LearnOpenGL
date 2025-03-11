@@ -24,6 +24,12 @@
     <Filter Include="resource\nanosuit">
       <UniqueIdentifier>{ac284571-3298-433c-97ef-ee6aae745574}</UniqueIdentifier>
     </Filter>
+    <Filter Include="resource\planet">
+      <UniqueIdentifier>{d493f397-9025-4418-98b0-f6edba03dfb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resource\rock">
+      <UniqueIdentifier>{3974b60c-daf1-4fde-85fe-4e5b439d155e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -186,6 +192,12 @@
     <Image Include="..\resources\nanosuit_reflection\leg_showroom_spec.png">
       <Filter>resource\nanosuit</Filter>
     </Image>
+    <Image Include="..\resources\planet\planet_Quom1200.png">
+      <Filter>resource\planet</Filter>
+    </Image>
+    <Image Include="..\resources\rock\Rock-Texture-Surface.jpg">
+      <Filter>resource\rock</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resources\backpack\backpack.mtl">
@@ -240,6 +252,18 @@
       <Filter>resource\shaders</Filter>
     </None>
     <None Include="..\resources\shaders\instance.vert">
+      <Filter>resource\shaders</Filter>
+    </None>
+    <None Include="..\resources\planet\planet.mtl">
+      <Filter>resource\planet</Filter>
+    </None>
+    <None Include="..\resources\rock\rock.mtl">
+      <Filter>resource\rock</Filter>
+    </None>
+    <None Include="..\resources\shaders\planet.frag">
+      <Filter>resource\shaders</Filter>
+    </None>
+    <None Include="..\resources\shaders\planet.vert">
       <Filter>resource\shaders</Filter>
     </None>
   </ItemGroup>

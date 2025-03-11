@@ -28,6 +28,7 @@ public:
         loadModel(path);
     }
     void Draw(Shader& shader);
+    vector<Mesh> getMeshes() const { return meshes; }
 private:
     /*  模型数据  */
     vector<Mesh> meshes;

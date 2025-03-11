@@ -31,6 +31,7 @@ public:
     /*  º¯Êý  */
     Mesh(vector<Vertex> vertices, vector<unsigned int> indices = {}, vector<Texture> textures = {});
     void Draw(Shader& shader);
+    unsigned int getVAO() const { return VAO; }
 private:
     /*  äÖÈ¾Êý¾Ý  */
     unsigned int VAO, VBO, EBO;

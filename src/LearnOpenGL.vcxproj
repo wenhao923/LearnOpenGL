@@ -75,11 +75,15 @@
     <Image Include="..\resources\nanosuit_reflection\leg_showroom_ddn.png" />
     <Image Include="..\resources\nanosuit_reflection\leg_showroom_refl.png" />
     <Image Include="..\resources\nanosuit_reflection\leg_showroom_spec.png" />
+    <Image Include="..\resources\planet\planet_Quom1200.png" />
+    <Image Include="..\resources\rock\Rock-Texture-Surface.jpg" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resources\backpack\backpack.mtl" />
     <None Include="..\resources\nanosuit_reflection\nanosuit.blend" />
     <None Include="..\resources\nanosuit_reflection\nanosuit.mtl" />
+    <None Include="..\resources\planet\planet.mtl" />
+    <None Include="..\resources\rock\rock.mtl" />
     <None Include="..\resources\shaders\backPackshader.frag" />
     <None Include="..\resources\shaders\backPackshader.vert" />
     <None Include="..\resources\shaders\displayNormal.frag" />
@@ -92,6 +96,8 @@
     <None Include="..\resources\shaders\fboshader.frag" />
     <None Include="..\resources\shaders\objectshader.frag" />
     <None Include="..\resources\shaders\fboshader.vert" />
+    <None Include="..\resources\shaders\planet.frag" />
+    <None Include="..\resources\shaders\planet.vert" />
     <None Include="..\resources\shaders\shader.vert" />
     <None Include="..\resources\shaders\skyboxshader.frag" />
     <None Include="..\resources\shaders\skyboxshader.vert" />
