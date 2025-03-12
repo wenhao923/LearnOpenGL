@@ -149,6 +149,9 @@ int main() {
 		}
 		for (unsigned int i = 0; i < rock.getMeshes().size(); i++)
 		{
+			asteroidShader.setInt("texture_diffuse1", 0);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, rock.getTextures()[0].id);
 			glBindVertexArray(rock.getMeshes()[i].getVAO());
 			glDrawElementsInstanced(
 				GL_TRIANGLES, rock.getMeshes()[i].indices.size(), GL_UNSIGNED_INT, 0, amount

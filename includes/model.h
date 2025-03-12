@@ -29,6 +29,7 @@ public:
     }
     void Draw(Shader& shader);
     vector<Mesh> getMeshes() const { return meshes; }
+    vector<Texture> getTextures() const { return textures_loaded; }
 private:
     /*  模型数据  */
     vector<Mesh> meshes;

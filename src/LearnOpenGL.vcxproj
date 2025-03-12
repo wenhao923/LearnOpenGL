@@ -84,6 +84,8 @@
     <None Include="..\resources\nanosuit_reflection\nanosuit.mtl" />
     <None Include="..\resources\planet\planet.mtl" />
     <None Include="..\resources\rock\rock.mtl" />
+    <None Include="..\resources\shaders\asteroid.frag" />
+    <None Include="..\resources\shaders\asteroid.vert" />
     <None Include="..\resources\shaders\backPackshader.frag" />
     <None Include="..\resources\shaders\backPackshader.vert" />
     <None Include="..\resources\shaders\displayNormal.frag" />
