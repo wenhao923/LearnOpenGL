@@ -23,7 +23,7 @@ public:
     }
 
     // 从文件加载纹理（支持自动通道检测）
-    void LoadFromFile(const std::string& path, const std::string& type, bool flipVertically = true) {
+    void LoadFromFile(const std::string& path, const std::string& type, bool flipVertically = true, bool gammaCorrection = false) {
         stbi_set_flip_vertically_on_load(flipVertically);
         this->type = type;
 
@@ -44,11 +44,11 @@ public:
             internalFormat = dataFormat = GL_RED;
         }
         else if (nrChannels == 3) {
-            internalFormat = GL_RGB;
+            internalFormat = gammaCorrection ? GL_SRGB : GL_RGB;
             dataFormat = GL_RGB;
         }
         else if (nrChannels == 4) {
-            internalFormat = GL_RGBA;
+            internalFormat = gammaCorrection ? GL_SRGB_ALPHA : GL_RGBA;
             dataFormat = GL_RGBA;
         }
         else {
