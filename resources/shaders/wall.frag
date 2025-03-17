@@ -1,8 +1,11 @@
 #version 330 core
-in vec2 TexCoords;
-in vec3 FragPos;
-
 out vec4 FragColor; 
+
+in VS_OUT {
+    vec3 FragPos;
+    vec2 TexCoords;
+    mat3 TBN;
+} fs_in;
 
 uniform sampler2D diffuseTexture;
 uniform sampler2D normalTexture;
@@ -27,12 +30,13 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
 void main()
 {
-	vec3 Normal = vec3(texture(normalTexture, TexCoords));
-	Normal = 2.0*Normal - 1.0;
+	vec3 Normal = vec3(texture(normalTexture, fs_in.TexCoords));
+	Normal = normalize(2.0 * Normal - 1.0);
+	Normal = normalize(fs_in.TBN * Normal);
 
 	vec3 result = vec3(0.0);
 	for (int i = 0; i < 1; i++) {
-		result += CalcPointLight(pointLights[i], Normal, FragPos, normalize(viewPos - FragPos));
+		result += CalcPointLight(pointLights[i], Normal, fs_in.FragPos, normalize(viewPos - fs_in.FragPos));
 	}
 
     FragColor = vec4(result, 1.0);
@@ -41,16 +45,16 @@ void main()
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
 	// ambient
-    vec3 ambient = vec3(texture(diffuseTexture, TexCoords)) * light.ambient*0.1;
+    vec3 ambient = vec3(texture(diffuseTexture, fs_in.TexCoords)) * light.ambient*0.1;
 	// diffuse
 	vec3 norm = normalize(normal);
 	vec3 lightDir = normalize(light.position - fragPos);
 	float diff = max(dot(norm, lightDir), 0.0);
-	vec3 diffuse = light.diffuse * diff * vec3(texture(diffuseTexture, TexCoords));
+	vec3 diffuse = light.diffuse * diff * vec3(texture(diffuseTexture, fs_in.TexCoords));
 	// specular
 	vec3 reflectDir = reflect(-lightDir, norm);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 64);
-	vec3 specular = light.specular * spec * vec3(texture(diffuseTexture, TexCoords));
+	vec3 specular = light.specular * spec * vec3(texture(diffuseTexture, fs_in.TexCoords));
 
 	// attenuation
 	float distance = length(light.position - fragPos);
