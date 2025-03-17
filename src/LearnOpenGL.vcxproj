@@ -45,6 +45,8 @@
     <Image Include="..\resources\backpack\roughness.jpg" />
     <Image Include="..\resources\backpack\specular.jpg" />
     <Image Include="..\resources\blending_transparent_window.png" />
+    <Image Include="..\resources\brickwall.jpg" />
+    <Image Include="..\resources\brickwall_normal.jpg" />
     <Image Include="..\resources\container.jpg" />
     <Image Include="..\resources\container2.png" />
     <Image Include="..\resources\container2_specular.png" />
@@ -103,6 +105,8 @@
     <None Include="..\resources\shaders\shader.vert" />
     <None Include="..\resources\shaders\skyboxshader.frag" />
     <None Include="..\resources\shaders\skyboxshader.vert" />
+    <None Include="..\resources\shaders\wall.frag" />
+    <None Include="..\resources\shaders\wall.vert" />
   </ItemGroup>
   <ItemGroup>
     <Object Include="..\resources\backpack\backpack.obj">

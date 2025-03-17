@@ -198,6 +198,12 @@
     <Image Include="..\resources\rock\Rock-Texture-Surface.jpg">
       <Filter>resource\rock</Filter>
     </Image>
+    <Image Include="..\resources\brickwall.jpg">
+      <Filter>resource\images</Filter>
+    </Image>
+    <Image Include="..\resources\brickwall_normal.jpg">
+      <Filter>resource\images</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\resources\backpack\backpack.mtl">
@@ -264,6 +270,18 @@
       <Filter>resource\shaders</Filter>
     </None>
     <None Include="..\resources\shaders\planet.vert">
+      <Filter>resource\shaders</Filter>
+    </None>
+    <None Include="..\resources\shaders\asteroid.frag">
+      <Filter>resource\shaders</Filter>
+    </None>
+    <None Include="..\resources\shaders\asteroid.vert">
+      <Filter>resource\shaders</Filter>
+    </None>
+    <None Include="..\resources\shaders\wall.frag">
+      <Filter>resource\shaders</Filter>
+    </None>
+    <None Include="..\resources\shaders\wall.vert">
       <Filter>resource\shaders</Filter>
     </None>
   </ItemGroup>
