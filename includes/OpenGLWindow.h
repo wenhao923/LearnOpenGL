@@ -64,6 +64,12 @@ public:
             camera->ProcessKeyboard(LEFT, deltaTime);
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
             camera->ProcessKeyboard(RIGHT, deltaTime);
+        // Change parallax height scale
+        if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+            height_scale -= 0.001;
+        if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+            height_scale += 0.001;
+
     }
 
     bool shouldClose() {
@@ -89,6 +95,8 @@ public:
     void setCamera(Camera* cam) { camera = cam; }
 
     void setDeltaTime(float delta) { deltaTime = delta; }
+
+	float getFloatHeight() const { return height_scale; }
 
 private:
     static void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
@@ -127,4 +135,5 @@ private:
     bool firstMouse;
     Camera* camera; // 持有Camera指针
     float deltaTime = 0.0f; // 新增：帧时间差
+	float height_scale = 0.1;
 };

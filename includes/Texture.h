@@ -56,7 +56,7 @@ public:
             throw std::runtime_error("Unsupported texture format: " + std::to_string(nrChannels) + " channels");
         }
 
-        Bind();
+        Bind(unit);
         // 设置默认纹理参数
         SetWrap(GL_REPEAT);
         SetFilter(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
@@ -67,21 +67,22 @@ public:
     }
 
     // 绑定到指定纹理单元
-    void Bind(GLuint unit = 0) const {
+    void Bind(GLuint unit = 0) {
+        this->unit = unit;
         glActiveTexture(GL_TEXTURE0 + unit);
         glBindTexture(GL_TEXTURE_2D, ID);
     }
 
     // 设置环绕方式
     void SetWrap(GLint wrapS = GL_REPEAT, GLint wrapT = GL_REPEAT) {
-        Bind();
+        Bind(unit);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT);
     }
 
     // 设置过滤方式
     void SetFilter(GLint minFilter, GLint magFilter = GL_LINEAR) {
-        Bind();
+        Bind(unit);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
     }
@@ -94,6 +95,7 @@ public:
     std::string GetPath() const { return path; }
 
 private:
+    GLuint unit = 0; // 纹理单元
     GLuint ID = 0; // 纹理ID
     std::string type;
     std::string path;

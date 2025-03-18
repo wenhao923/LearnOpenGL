@@ -33,7 +33,7 @@ int main() {
 	glDepthFunc(GL_LESS);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_FRAMEBUFFER_SRGB);
+	//glEnable(GL_FRAMEBUFFER_SRGB);
 	//glEnable(GL_CULL_FACE);
 
 	stbi_set_flip_vertically_on_load(false);
@@ -67,6 +67,11 @@ int main() {
 	tangent1.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
 	tangent1 = glm::normalize(tangent1);
 
+	bitangent1.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+	bitangent1.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+	bitangent1.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+	bitangent1 = glm::normalize(bitangent1);
+
 	// - triangle 2
 	edge1 = pos3 - pos1;
 	edge2 = pos4 - pos1;
@@ -80,15 +85,22 @@ int main() {
 	tangent2.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
 	tangent2 = glm::normalize(tangent2);
 
-	GLfloat walls[] = {
-		// Positions            // normal         // TexCoords  // Tangent                         
-		pos1.x, pos1.y, pos1.z, nm.x, nm.y, nm.z, uv1.x, uv1.y, tangent1.x, tangent1.y, tangent1.z,
-		pos2.x, pos2.y, pos2.z, nm.x, nm.y, nm.z, uv2.x, uv2.y, tangent1.x, tangent1.y, tangent1.z,
-		pos3.x, pos3.y, pos3.z, nm.x, nm.y, nm.z, uv3.x, uv3.y, tangent1.x, tangent1.y, tangent1.z,
 
-		pos1.x, pos1.y, pos1.z, nm.x, nm.y, nm.z, uv1.x, uv1.y, tangent2.x, tangent2.y, tangent2.z,
-		pos3.x, pos3.y, pos3.z, nm.x, nm.y, nm.z, uv3.x, uv3.y, tangent2.x, tangent2.y, tangent2.z,
-		pos4.x, pos4.y, pos4.z, nm.x, nm.y, nm.z, uv4.x, uv4.y, tangent2.x, tangent2.y, tangent2.z
+	bitangent2.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+	bitangent2.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+	bitangent2.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+	bitangent2 = glm::normalize(bitangent2);
+
+
+	GLfloat walls[] = {
+		// Positions            // normal         // TexCoords  // Tangent                          // Bitangent
+		pos1.x, pos1.y, pos1.z, nm.x, nm.y, nm.z, uv1.x, uv1.y, tangent1.x, tangent1.y, tangent1.z, bitangent1.x, bitangent1.y, bitangent1.z,
+		pos2.x, pos2.y, pos2.z, nm.x, nm.y, nm.z, uv2.x, uv2.y, tangent1.x, tangent1.y, tangent1.z, bitangent1.x, bitangent1.y, bitangent1.z,
+		pos3.x, pos3.y, pos3.z, nm.x, nm.y, nm.z, uv3.x, uv3.y, tangent1.x, tangent1.y, tangent1.z, bitangent1.x, bitangent1.y, bitangent1.z,
+
+		pos1.x, pos1.y, pos1.z, nm.x, nm.y, nm.z, uv1.x, uv1.y, tangent2.x, tangent2.y, tangent2.z, bitangent2.x, bitangent2.y, bitangent2.z,
+		pos3.x, pos3.y, pos3.z, nm.x, nm.y, nm.z, uv3.x, uv3.y, tangent2.x, tangent2.y, tangent2.z, bitangent2.x, bitangent2.y, bitangent2.z,
+		pos4.x, pos4.y, pos4.z, nm.x, nm.y, nm.z, uv4.x, uv4.y, tangent2.x, tangent2.y, tangent2.z, bitangent2.x, bitangent2.y, bitangent2.z
 	};
 
 	unsigned int VAO, VBO;
@@ -98,13 +110,15 @@ int main() {
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(walls), walls, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(6 * sizeof(float)));	
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 14 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(8 * sizeof(float)));
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(GLfloat), (GLvoid*)(8 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(GLfloat), (GLvoid*)(11 * sizeof(GLfloat)));
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
@@ -163,16 +177,17 @@ int main() {
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
 	// 贴图资源
-	myTexture wallTexture, wallTextureNormal;
-	wallTexture.LoadFromFile("../resources/brickwall.jpg", "texture_diffuse", false, true);
-	wallTextureNormal.LoadFromFile("../resources/brickwall_normal.jpg", "texture_normal", false, false);
+	myTexture wallTexture, wallTextureNormal, wallTextureHeight;
+	wallTexture.LoadFromFile("../resources/bricks2.jpg", "texture_diffuse", false, false);
+	wallTextureNormal.LoadFromFile("../resources/bricks2_normal.jpg", "texture_normal", false, false);
+	wallTextureHeight.LoadFromFile("../resources/bricks2_disp.jpg", "texture_height", false, false);
 
 	// shader资源
 	Shader wallShader("../resources/shaders/wall.vert", "../resources/shaders/wall.frag");
@@ -181,6 +196,8 @@ int main() {
 	wallShader.setInt("diffuseTexture", 0);
 	wallTextureNormal.Bind(1);
 	wallShader.setInt("normalTexture", 1);
+	wallTextureHeight.Bind(2);
+	wallShader.setInt("heightTexture", 2);
 
 	Shader lampShader("../resources/shaders/shader.vert", "../resources/shaders/lampShader.frag");
 	lampShader.setVec3("lightColor", glm::vec3(1.0));
@@ -227,14 +244,16 @@ int main() {
 		std::vector<std::shared_ptr<Light>> Lights;
 		// 创建点光源
 		attenuation att = { 1.0f, 0.045f, 0.0075f };
-		auto pointLight = std::make_shared<PointLight>(glm::vec3(0.0, 0.0f, -1.0), att);
+		auto pointLight = std::make_shared<PointLight>(glm::vec3(0.0f, sin(currentFrame), cos(currentFrame)), att);
 		Lights.push_back(pointLight);
 
 		glBindVertexArray(VAO);
 		wallShader.use();
 		auto model = glm::mat4(1.0f);
+		//model = rotate(model, glm::radians(-45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		wallShader.setupShader(Lights, model, view, projection);
 		wallShader.setVec3("viewPos", myCamera.Position);
+		wallShader.setFloat("height_scale", window.getFloatHeight());
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		glBindVertexArray(lightVAO);

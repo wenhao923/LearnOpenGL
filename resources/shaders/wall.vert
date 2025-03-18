@@ -3,6 +3,7 @@ layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 normal;
 layout (location = 2) in vec2 aTexcoord;
 layout (location = 3) in vec3 tangent;
+layout (location = 4) in vec3 bitangent;
 
 out VS_OUT {
     vec3 FragPos;
@@ -24,8 +25,8 @@ void main()
    vs_out.FragPos = vec3(model * vec4(aPos, 1.0));
    vs_out.TexCoords = aTexcoord;
    
-   vec3 T = normalize(vec3(model * vec4(tangent,   0.0)));
-   vec3 N = normalize(vec3(model * vec4(normal,    0.0)));
-   vec3 B = cross(T, N);
+   vec3 T = normalize(mat3(model) * tangent);
+   vec3 B = normalize(mat3(model) * bitangent);
+   vec3 N = normalize(mat3(model) * normal);
    vs_out.TBN = mat3(T, B, N);
 };

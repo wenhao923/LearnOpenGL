@@ -9,6 +9,8 @@ in VS_OUT {
 
 uniform sampler2D diffuseTexture;
 uniform sampler2D normalTexture;
+uniform sampler2D heightTexture;
+uniform float height_scale;
 
 struct PointLight {
     vec3 position;
@@ -27,10 +29,20 @@ uniform PointLight pointLights[NR_POINT_LIGHTS];
 uniform vec3 viewPos;
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
+vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir);
+vec2 myTexCoords;
 
 void main()
 {
-	vec3 Normal = vec3(texture(normalTexture, fs_in.TexCoords));
+	// 视差贴图计算texcoord(切线空间计算)
+	vec3 view = normalize(transpose(fs_in.TBN) * normalize(viewPos - fs_in.FragPos));
+	myTexCoords = ParallaxMapping(fs_in.TexCoords, view);
+	if(myTexCoords.x > 1.0 || myTexCoords.y > 1.0 || myTexCoords.x < 0.0 || myTexCoords.y < 0.0)
+		discard;
+
+
+	// 法线贴图计算扰动后的法线方向(世界空间的法线)
+	vec3 Normal = vec3(texture(normalTexture, myTexCoords));
 	Normal = normalize(2.0 * Normal - 1.0);
 	Normal = normalize(fs_in.TBN * Normal);
 
@@ -45,16 +57,17 @@ void main()
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
 	// ambient
-    vec3 ambient = vec3(texture(diffuseTexture, fs_in.TexCoords)) * light.ambient*0.1;
+    vec3 ambient = vec3(texture(diffuseTexture, myTexCoords)) * 0.1;
 	// diffuse
 	vec3 norm = normalize(normal);
 	vec3 lightDir = normalize(light.position - fragPos);
 	float diff = max(dot(norm, lightDir), 0.0);
-	vec3 diffuse = light.diffuse * diff * vec3(texture(diffuseTexture, fs_in.TexCoords));
+	vec3 diffuse = diff * vec3(texture(diffuseTexture, myTexCoords));
 	// specular
 	vec3 reflectDir = reflect(-lightDir, norm);
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 64);
-	vec3 specular = light.specular * spec * vec3(texture(diffuseTexture, fs_in.TexCoords));
+	vec3 halfwayDir = normalize(lightDir + viewDir);  
+	float spec = pow(max(dot(halfwayDir, normal), 0.0), 64);
+	vec3 specular = spec * vec3(texture(diffuseTexture, myTexCoords));
 
 	// attenuation
 	float distance = length(light.position - fragPos);
@@ -65,4 +78,11 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 	specular *= attenuation;
 	
 	return ambient + diffuse + specular;
+}
+
+vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
+{ 
+    float height =  texture(heightTexture, texCoords).r;    
+    vec2 p = viewDir.xy / viewDir.z * (height * height_scale);
+    return texCoords - p;    
 }
