@@ -82,7 +82,26 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
 vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
 { 
-    float height =  texture(heightTexture, texCoords).r;    
-    vec2 p = viewDir.xy / viewDir.z * (height * height_scale);
-    return texCoords - p;    
+    float height_scale = 0.1;
+    const float minLayers = 8.0, maxLayers = 32.0;
+    float numLayers = mix(maxLayers, minLayers, abs(viewDir.z));
+    float layerDepth = 1.0 / numLayers;
+
+	// 核心公式：viewDir.xy / viewDir.z * (h * scale) → 分解为分层步进
+    //vec2 deltaUV = viewDir.xy / viewDir.z * (height_scale / numLayers); 
+    
+	vec2 P = viewDir.xy * height_scale; 
+    vec2 deltaUV = P / numLayers;
+
+    float currentLayerDepth = 0.0;
+    vec2 currentUV = texCoords;
+    float currentDepth = texture(heightTexture, currentUV).r;
+    
+    // 分层步进逼近真实交点
+    while (currentLayerDepth < currentDepth) {
+        currentUV -= deltaUV; // 分层应用偏移
+        currentDepth = texture(heightTexture, currentUV).r;
+        currentLayerDepth += layerDepth;
+    }
+	return currentUV;
 }

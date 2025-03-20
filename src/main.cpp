@@ -244,7 +244,8 @@ int main() {
 		std::vector<std::shared_ptr<Light>> Lights;
 		// 创建点光源
 		attenuation att = { 1.0f, 0.045f, 0.0075f };
-		auto pointLight = std::make_shared<PointLight>(glm::vec3(0.0f, sin(currentFrame), cos(currentFrame)), att);
+		//auto pointLight = std::make_shared<PointLight>(glm::vec3(0.0f, sin(currentFrame), cos(currentFrame)), att);
+		auto pointLight = std::make_shared<PointLight>(glm::vec3(0.0f, 0.0f, 1.0f), att);
 		Lights.push_back(pointLight);
 
 		glBindVertexArray(VAO);
