@@ -86,9 +86,6 @@ vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
     const float minLayers = 8.0, maxLayers = 32.0;
     float numLayers = mix(maxLayers, minLayers, abs(viewDir.z));
     float layerDepth = 1.0 / numLayers;
-
-	// 核心公式：viewDir.xy / viewDir.z * (h * scale) → 分解为分层步进
-    //vec2 deltaUV = viewDir.xy / viewDir.z * (height_scale / numLayers); 
     
 	vec2 P = viewDir.xy * height_scale; 
     vec2 deltaUV = P / numLayers;
@@ -103,5 +100,16 @@ vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
         currentDepth = texture(heightTexture, currentUV).r;
         currentLayerDepth += layerDepth;
     }
-	return currentUV;
+
+	vec2 prevTexCoords = currentUV + deltaUV;
+
+	// get depth after and before collision for linear interpolation
+	float afterDepth  = currentDepth - currentLayerDepth;
+	float beforeDepth = texture(heightTexture, prevTexCoords).r - currentLayerDepth + layerDepth;
+
+	// interpolation of texture coordinates
+	float weight = afterDepth / (afterDepth - beforeDepth);
+	vec2 finalTexCoords = mix(currentUV, prevTexCoords, weight);
+
+	return finalTexCoords;
 }
