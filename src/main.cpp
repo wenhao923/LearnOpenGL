@@ -16,6 +16,7 @@
 // settings
 const int screenWidth = 800;
 const int screenHeight = 600;
+void RenderQuad();
 
 int main() {
 	OpenGLWindow window(screenWidth, screenHeight, "LearnOpenGL");
@@ -37,6 +38,31 @@ int main() {
 	//glEnable(GL_CULL_FACE);
 
 	stbi_set_flip_vertically_on_load(false);
+
+	// 帧缓冲
+	unsigned int hdrFBO;
+	glGenFramebuffers(1, &hdrFBO);
+	// 创建颜色缓冲区
+	unsigned int colorBuffer;
+	glGenTextures(1, &colorBuffer);
+	glBindTexture(GL_TEXTURE_2D, colorBuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, screenWidth, screenHeight, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// 创建深度缓冲区
+	unsigned int rboDepth;
+	glGenRenderbuffers(1, &rboDepth);
+	glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, screenWidth, screenHeight);
+	// attach buffers
+	glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBuffer, 0);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
+	// 检查帧缓冲是否完整
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "Framebuffer not complete!" << std::endl;
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);      // 解绑colorBuffer
 
 	// positions
 	glm::vec3 pos1(-1.0, 1.0, 0.0);
@@ -215,6 +241,11 @@ int main() {
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 2 * sizeof(glm::mat4));
 
+	Shader hdrShader("../resources/shaders/hdrshader.vert", "../resources/shaders/hdrshader.frag");
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, colorBuffer);
+	hdrShader.setInt("texture_diffuse1", 3);
+
 	while (!window.shouldClose()) {
 		static float lastFrame = 0.0f;
 		float currentFrame = static_cast<float>(glfwGetTime());
@@ -226,7 +257,7 @@ int main() {
 
 		// 主屏幕pass
 		glEnable(GL_DEPTH_TEST);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
 
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -243,9 +274,9 @@ int main() {
 		// 创建光源数组
 		std::vector<std::shared_ptr<Light>> Lights;
 		// 创建点光源
-		attenuation att = { 1.0f, 0.045f, 0.0075f };
-		//auto pointLight = std::make_shared<PointLight>(glm::vec3(0.0f, sin(currentFrame), cos(currentFrame)), att);
-		auto pointLight = std::make_shared<PointLight>(glm::vec3(0.0f, 0.0f, 1.0f), att);
+		attenuation att = { 0.1f, 0.045f, 0.0075f };
+		auto pointLight = std::make_shared<PointLight>(glm::vec3(0.0f, sin(currentFrame), cos(currentFrame)), att);
+		pointLight = std::make_shared<PointLight>(glm::vec3(0.0f, 0.0f, 1.0f), att);
 		Lights.push_back(pointLight);
 
 		glBindVertexArray(VAO);
@@ -265,6 +296,13 @@ int main() {
 		lampShader.setMat4("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
+		// pass 2
+		hdrShader.use();
+		hdrShader.setFloat("exposure",  window.getExposure());
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		RenderQuad();
+
 		window.swapBuffers();
 		window.pollEvents();
 	}
@@ -273,4 +311,33 @@ int main() {
 
 	window.terminate();
 	return 0;
+}
+
+GLuint quadVAO = 0;
+GLuint quadVBO;
+void RenderQuad()
+{
+	if (quadVAO == 0)
+	{
+		GLfloat quadVertices[] = {
+			// Positions        // Texture Coords
+			-1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+			-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+			1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+			1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+		};
+		// Setup plane VAO
+		glGenVertexArrays(1, &quadVAO);
+		glGenBuffers(1, &quadVBO);
+		glBindVertexArray(quadVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	}
+	glBindVertexArray(quadVAO);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glBindVertexArray(0);
 }

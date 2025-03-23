@@ -94,6 +94,8 @@
     <None Include="..\resources\shaders\displayNormal.geom" />
     <None Include="..\resources\shaders\displayNormal.vert" />
     <None Include="..\resources\shaders\explode.geom" />
+    <None Include="..\resources\shaders\hdrshader.frag" />
+    <None Include="..\resources\shaders\hdrshader.vert" />
     <None Include="..\resources\shaders\instance.frag" />
     <None Include="..\resources\shaders\instance.vert" />
     <None Include="..\resources\shaders\lampshader.frag" />

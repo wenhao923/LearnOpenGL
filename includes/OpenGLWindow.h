@@ -66,9 +66,9 @@ public:
             camera->ProcessKeyboard(RIGHT, deltaTime);
         // Change parallax height scale
         if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-            height_scale -= 0.001;
+            exposure -= 0.5 * deltaTime;
         if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-            height_scale += 0.001;
+            exposure += 0.5 * deltaTime;
 
     }
 
@@ -97,6 +97,8 @@ public:
     void setDeltaTime(float delta) { deltaTime = delta; }
 
 	float getFloatHeight() const { return height_scale; }
+	
+    float getExposure() const { return exposure; }
 
 private:
     static void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
@@ -136,4 +138,5 @@ private:
     Camera* camera; // 持有Camera指针
     float deltaTime = 0.0f; // 新增：帧时间差
 	float height_scale = 0.1;
+	float exposure = 1.0;
 };

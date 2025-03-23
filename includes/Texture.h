@@ -88,7 +88,7 @@ public:
     }
 
     // ªÒ»°Œ∆¿ÌID
-    GLuint GetID() const { return ID; }
+    GLuint GetID() { return ID; }
     
     std::string GetType() const { return type; }
 
