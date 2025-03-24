@@ -90,6 +90,8 @@
     <None Include="..\resources\shaders\asteroid.vert" />
     <None Include="..\resources\shaders\backPackshader.frag" />
     <None Include="..\resources\shaders\backPackshader.vert" />
+    <None Include="..\resources\shaders\blurshader.frag" />
+    <None Include="..\resources\shaders\blurshader.vert" />
     <None Include="..\resources\shaders\displayNormal.frag" />
     <None Include="..\resources\shaders\displayNormal.geom" />
     <None Include="..\resources\shaders\displayNormal.vert" />

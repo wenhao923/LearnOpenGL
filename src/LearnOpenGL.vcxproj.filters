@@ -284,6 +284,18 @@
     <None Include="..\resources\shaders\wall.vert">
       <Filter>resource\shaders</Filter>
     </None>
+    <None Include="..\resources\shaders\blurshader.frag">
+      <Filter>resource\shaders</Filter>
+    </None>
+    <None Include="..\resources\shaders\blurshader.vert">
+      <Filter>resource\shaders</Filter>
+    </None>
+    <None Include="..\resources\shaders\hdrshader.frag">
+      <Filter>resource\shaders</Filter>
+    </None>
+    <None Include="..\resources\shaders\hdrshader.vert">
+      <Filter>resource\shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Object Include="..\resources\backpack\backpack.obj">

@@ -42,27 +42,61 @@ int main() {
 	// 帧缓冲
 	unsigned int hdrFBO;
 	glGenFramebuffers(1, &hdrFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
 	// 创建颜色缓冲区
-	unsigned int colorBuffer;
-	glGenTextures(1, &colorBuffer);
-	glBindTexture(GL_TEXTURE_2D, colorBuffer);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, screenWidth, screenHeight, 0, GL_RGB, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	GLuint colorBuffers[2];
+	glGenTextures(2, colorBuffers);
+	for (GLuint i = 0; i < 2; i++)
+	{
+		glBindTexture(GL_TEXTURE_2D, colorBuffers[i]);
+		glTexImage2D(
+			GL_TEXTURE_2D, 0, GL_RGB16F, screenWidth, screenHeight, 0, GL_RGB, GL_FLOAT, NULL
+		);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		// attach texture to framebuffer
+		glFramebufferTexture2D(
+			GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, colorBuffers[i], 0
+		);
+	}
+	GLuint attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+	glDrawBuffers(2, attachments);
 	// 创建深度缓冲区
 	unsigned int rboDepth;
 	glGenRenderbuffers(1, &rboDepth);
 	glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, screenWidth, screenHeight);
-	// attach buffers
-	glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBuffer, 0);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
 	// 检查帧缓冲是否完整
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "Framebuffer not complete!" << std::endl;
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);      // 解绑colorBuffer
+
+	// blurFBO
+	GLuint pingpongFBO[2];
+	GLuint pingpongBuffer[2];
+	glGenFramebuffers(2, pingpongFBO);
+	glGenTextures(2, pingpongBuffer);
+	for (GLuint i = 0; i < 2; i++)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[i]);
+		glBindTexture(GL_TEXTURE_2D, pingpongBuffer[i]);
+		glTexImage2D(
+			GL_TEXTURE_2D, 0, GL_RGB16F, screenWidth, screenHeight, 0, GL_RGB, GL_FLOAT, NULL
+		);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glFramebufferTexture2D(
+			GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pingpongBuffer[i], 0
+		);
+	}
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "Framebuffer not complete!" << std::endl;
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// positions
 	glm::vec3 pos1(-1.0, 1.0, 0.0);
@@ -217,16 +251,8 @@ int main() {
 
 	// shader资源
 	Shader wallShader("../resources/shaders/wall.vert", "../resources/shaders/wall.frag");
-	wallShader.use();
-	wallTexture.Bind(0);
-	wallShader.setInt("diffuseTexture", 0);
-	wallTextureNormal.Bind(1);
-	wallShader.setInt("normalTexture", 1);
-	wallTextureHeight.Bind(2);
-	wallShader.setInt("heightTexture", 2);
 
 	Shader lampShader("../resources/shaders/shader.vert", "../resources/shaders/lampShader.frag");
-	lampShader.setVec3("lightColor", glm::vec3(1.0));
 
 	// ubo 
 	unsigned int uniformBlockIndexMod = glGetUniformBlockIndex(wallShader.ID, "Matrices");
@@ -242,9 +268,7 @@ int main() {
 	glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 2 * sizeof(glm::mat4));
 
 	Shader hdrShader("../resources/shaders/hdrshader.vert", "../resources/shaders/hdrshader.frag");
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, colorBuffer);
-	hdrShader.setInt("texture_diffuse1", 3);
+	Shader blurShader("../resources/shaders/blurshader.vert", "../resources/shaders/blurshader.frag");
 
 	while (!window.shouldClose()) {
 		static float lastFrame = 0.0f;
@@ -274,13 +298,20 @@ int main() {
 		// 创建光源数组
 		std::vector<std::shared_ptr<Light>> Lights;
 		// 创建点光源
-		attenuation att = { 0.1f, 0.045f, 0.0075f };
+		attenuation att = { 0.4f, 0.045f, 0.0075f };
 		auto pointLight = std::make_shared<PointLight>(glm::vec3(0.0f, sin(currentFrame), cos(currentFrame)), att);
 		pointLight = std::make_shared<PointLight>(glm::vec3(0.0f, 0.0f, 1.0f), att);
 		Lights.push_back(pointLight);
 
 		glBindVertexArray(VAO);
 		wallShader.use();
+		wallTexture.Bind(0);
+		wallShader.setInt("diffuseTexture", 0);
+		wallTextureNormal.Bind(1);
+		wallShader.setInt("normalTexture", 1);
+		wallTextureHeight.Bind(2);
+		wallShader.setInt("heightTexture", 2);
+
 		auto model = glm::mat4(1.0f);
 		//model = rotate(model, glm::radians(-45.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		wallShader.setupShader(Lights, model, view, projection);
@@ -290,14 +321,42 @@ int main() {
 
 		glBindVertexArray(lightVAO);
 		lampShader.use();
+		lampShader.setVec3("lightColor", glm::vec3(10.0));
 		model = glm::mat4(1.0f);
 		model = glm::scale(model, glm::vec3(0.1f));
 		model = glm::translate(model, pointLight->position * 10.0f);
 		lampShader.setMat4("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
+
+		// blur pass
+		bool horizontal = true, first_iteration = true;
+		GLuint amount = 10;
+		blurShader.use();
+		for (GLuint i = 0; i < amount; i++)
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);
+			blurShader.setBool("horizontal", horizontal);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(
+				GL_TEXTURE_2D, first_iteration ? colorBuffers[1] : pingpongBuffer[!horizontal]
+			);
+			RenderQuad();
+			horizontal = !horizontal;
+			if (first_iteration)
+				first_iteration = false;
+		}
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 		// pass 2
 		hdrShader.use();
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, colorBuffers[0]);
+		hdrShader.setInt("hdrMap", 0);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, pingpongBuffer[!horizontal]);
+		hdrShader.setInt("bloomBlur", 1);
+
 		hdrShader.setFloat("exposure",  window.getExposure());
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

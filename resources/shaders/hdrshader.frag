@@ -3,12 +3,15 @@ in vec2 TexCoords;
 
 out vec4 FragColor; 
 
-uniform sampler2D texture_diffuse1;
+uniform sampler2D hdrMap;
+uniform sampler2D bloomBlur;
 uniform float exposure;
 
 void main()
 {
-    vec3 hdrColor = texture(texture_diffuse1, TexCoords).rgb;
+    vec3 hdrColor = texture(hdrMap, TexCoords).rgb;
+    vec3 bloomColor = texture(bloomBlur, TexCoords).rgb;
+    hdrColor += bloomColor; // additive blending
 
     // ÆØ¹âÉ«µ÷Ó³Éä
     vec3 mapped = vec3(1.0) - exp(-hdrColor * exposure);
